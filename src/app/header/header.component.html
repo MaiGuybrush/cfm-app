@@ -1,0 +1,84 @@
+
+<!--Navbar-->
+<mdb-navbar SideClass="navbar navbar-dark bg-dark sticky-top navbar-expand-lg p-0 ">
+<!-- Navbar brand -->
+<logo>
+<a class="navbar-brand" href="#"><img src="assets/images/logo.png" style="background-color:white"/></a>
+</logo>
+<logo>
+    <a class="navbar-brand" href="#"><h4 style="font-family: Impact, Charcoal, sans-serif; color:white">RTQCS</h4></a>
+</logo>
+<!-- Collapsible content -->
+<links>
+
+ <!-- Links -->
+ <ul class="navbar-nav mr-auto">
+     <li class="nav-item">
+         <a class="nav-link" mdbWavesEffect><span class="sr-only">(current)</span></a>
+     </li>
+     <li class="nav-item" *ngFor="let m of menuItems" routerLinkActive="active">
+        <a class="nav-link waves-light" mdbWavesEffect [routerLink]="m.link">{{m.title}}</a>
+     </li>
+     <!-- Dropdown -->
+     <!-- <li class="nav-item dropdown" dropdown>
+         <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
+         Basic dropdown<span class="caret"></span></a>
+         <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu">
+             <a class="dropdown-item waves-light" mdbWavesEffect href="#">Action</a>
+             <a class="dropdown-item waves-light" mdbWavesEffect href="#">Another action</a>
+             <a class="dropdown-item waves-light" mdbWavesEffect href="#">Something else here</a>
+             <div class="divider dropdown-divider"></div>
+             <a class="dropdown-item waves-light" mdbWavesEffect href="#">Separated link</a>
+         </div>
+     </li> -->
+
+ </ul>
+ <!-- Links -->
+
+<!-- Search form -->
+ <!-- <form class="form-inline waves-light" mdbWavesEffect>
+     <div class="md-form mt-0">
+         <input class="form-control mr-sm-2" type="text" placeholder="Search">
+     </div>
+ </form> -->
+ <ul class="navbar-nav px-3">
+    <li class="nav-item text-nowrap">
+      <a class="nav-link" href="#">Sign out</a>
+    </li>
+  </ul>
+
+</links>
+<!-- Collapsible content -->
+
+</mdb-navbar>
+<!--/.Navbar-->
+     
+<!-- <nav class="navbar navbar-dark bg-dark sticky-top navbar-expand-lg p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Dropdown
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">Criteria</a>
+        </li>
+          <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">Maintenance</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">Sign out</a>
+        </li>
+      </ul>
+    </div>
+</nav> -->
