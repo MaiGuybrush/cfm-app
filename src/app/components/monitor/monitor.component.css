@@ -1,0 +1,22 @@
+.layout-container
+{
+    height: 100%;
+}
+.menu-button
+{
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+/* .layout-container svg
+{
+    display: block;
+    margin: auto;
+} */
+
+.tool-info .ui-growl-item
+{
+    background: #343a40;
+    opacity: 0.8;
+}

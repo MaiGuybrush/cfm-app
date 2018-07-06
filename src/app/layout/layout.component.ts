@@ -9,7 +9,7 @@ import { NavMenuItem } from '../models/model.ui';
 export class LayoutComponent implements OnInit {
   menuItems: NavMenuItem[] = [
      { title: 'Monitor', link: 'monitor' }
-   , { title: 'Alarm', link: 'alarm' }
+   , { title: 'Layout', link: 'layout' }
    , { title: 'Analysis', link: 'analysis' }
   ];
 

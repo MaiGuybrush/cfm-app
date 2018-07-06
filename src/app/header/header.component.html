@@ -6,7 +6,7 @@
 <a class="navbar-brand" href="#"><img src="assets/images/logo.png" style="background-color:white"/></a>
 </logo>
 <logo>
-    <a class="navbar-brand" href="#"><h4 style="font-family: Impact, Charcoal, sans-serif; color:white">RTQCS</h4></a>
+    <a class="navbar-brand" href="#"><h5 style="font-family: sans-serif; color:white">CFM</h5></a>
 </logo>
 <!-- Collapsible content -->
 <links>
@@ -41,18 +41,30 @@
          <input class="form-control mr-sm-2" type="text" placeholder="Search">
      </div>
  </form> -->
- <ul class="navbar-nav px-3">
-    <li class="nav-item text-nowrap">
-      <a class="nav-link" href="#">Sign out</a>
-    </li>
-  </ul>
+<ul class="navbar-nav px-3">
+  <li>
+    <div class="btn-group" dropdown>
+        <button dropdownToggle type="button" class="btn btn-dark dropdown-toggle waves-light btn-sm" mdbWavesEffect>
+            {{currentFab | async}}
+        </button>    
+        <div class="dropdown-menu dropdown-primary">
+            <a *ngFor="let fab of fabList | async" class="dropdown-item" [routerLink]="'monitor/' + fab">{{fab}}</a>
+        </div>
+    </div>    
+  </li>
+</ul>
+<ul class="navbar-nav px-3">
+  <li class="nav-item text-nowrap">
+    <a class="nav-link" href="#">Sign out</a>
+  </li>
+</ul>
 
 </links>
 <!-- Collapsible content -->
 
 </mdb-navbar>
 <!--/.Navbar-->
-     
+
 <!-- <nav class="navbar navbar-dark bg-dark sticky-top navbar-expand-lg p-0">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">

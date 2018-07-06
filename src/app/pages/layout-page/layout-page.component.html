@@ -1,0 +1,12 @@
+<div class="row">
+  <div *ngFor="let layout of layoutList | async" class="col-lg-4">
+    <div class="card">
+      <!-- <div class="card-body" [ngStyle]="{'background-image': 'url(' + layout + ')'}"> -->
+      <div class="card-body" style="width:'100%';padding-top:'25%'">
+        <svg width="100%" height="100%">       
+            <image [attr.xlink:href]="layout" width="100%" height="100%"/>    
+        </svg>      
+      </div>
+    </div>
+  </div>
+</div>
