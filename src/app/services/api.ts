@@ -22,7 +22,7 @@ export class Api {
         switch (Api.source) {
 
             case ApiSource.Dev:
-                return 'http://10.53.56.79/apps/mes/opi/api/';
+                return 'http://HP06609P.cminl.oa/apps/mes/opi/api/';
             case ApiSource.ProdInInx:
                 return 'http://tncimap.cminl.oa/apps/mesclient/api/';
         }
@@ -30,7 +30,7 @@ export class Api {
     public static getOpiWebUrl(shop: string): string {
         switch (Api.source) {
             case ApiSource.Dev:
-                return 'http://10.53.56.79/apps/mes/opi/zh-tw/{shop}/'.replace('{shop}', shop);
+                return 'http://HP06609P.cminl.oa/apps/mes/opi/zh-tw/{shop}/'.replace('{shop}', shop);
             case ApiSource.ProdInInx:
                 return 'http://tncimap.cminl.oa/apps/mesclient/zh-tw/{shop}/'.replace('{shop}', shop);
         }

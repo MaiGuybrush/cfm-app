@@ -1,0 +1,8 @@
+ng serve --port 4201 --host c3c003469n.cminl.oa --disable-host-check
+
+
+
+TODO:
+layout 上傳: ngx-file-drop
+EQ Status history
+Alarm history

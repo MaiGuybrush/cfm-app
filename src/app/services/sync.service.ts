@@ -14,35 +14,44 @@ import { LayoutInfo } from '../models/layout-info';
 */
 export interface ApStatus {
   fab: string;
+  shop: string;
+  shopList: string[];
 }
 
 @Injectable()
 export class SyncService {
-    statusObserver: Observer<ApStatus>;
-    statusObservable: Observable<ApStatus>;
-    obs: Observable<ApStatus>;
-    status: ApStatus = {
-      fab: ''
-    };
-    constructor() {
-      this.obs = Observable.create( observer => {
-        this.statusObserver = observer;
-      });
-      this.obs.subscribe();
-    }
+    // statusObserver: Observer<ApStatus>;
+    // statusObservable: Observable<ApStatus>;
+    // obs: Observable<ApStatus>;
+    // status: ApStatus = {
+    //   fab: '',
+    //   shop: '',
+    //   shopList: [],
+    // };
+    // public static currentShop: string;
+    // constructor() {
+    //   this.obs = Observable.create( observer => {
+    //     this.statusObserver = observer;
+    //   });
+    // }
 
-    public updateStatus(status: ApStatus) {
-      this.status = status;
-      this.statusObserver.next(status);
-    }
+    // public updateStatus(status: ApStatus) {
+    //   this.status = status;
+    // }
 
-    public getObservableStatus(): Observable<ApStatus> {
-      this.statusObserver.next(this.status);
-      return this.obs;
-    }
+    // public updateFab(fab: string) {
+    //   if (this.status.fab === fab) {
+    //     return;
+    //   }
+    //   this.status.fab = fab;
+    // }
 
-    public getStatus(): ApStatus {
-      return this.status;
-    }
+    // public getObservableStatus(): Observable<ApStatus> {
+    //   return this.obs;
+    // }
+
+    // public getStatus(): ApStatus {
+    //   return this.status;
+    // }
 
 }

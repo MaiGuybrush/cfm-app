@@ -1,4 +1,5 @@
-import { Component, ViewChildren, ViewChild, ElementRef, OnInit, OnDestroy, QueryList, AfterViewInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
+import { Component, ViewChildren, ViewChild, ElementRef, OnInit, OnDestroy, QueryList, AfterViewInit, Pipe, PipeTransform, ViewEncapsulation, Input } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { ToolStatusService } from '../../services/tool-status.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Doc, Element, ViewBox, adopt } from 'svg.js';
@@ -6,13 +7,15 @@ import * as SvgPanZoom from 'svg-pan-zoom';
 import * as Rx from 'rxjs';
 import { timer, Observable, Subject, asapScheduler, pipe, of, from, interval, merge, fromEvent } from 'rxjs';
 import { ServerConfigService } from '../../services/server-config.service';
-import { Config } from '../../models/config';
+import { LocalConfig } from '../../models/local-config';
 import 'hammerjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SyncService } from '../../services/sync.service';
-import { concatMap, map, concatAll } from 'rxjs/operators';
+import { concatMap, map, debounceTime } from 'rxjs/operators';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { Message } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
+import { LocalConfigService } from '../../services/local-config.service';
 
 @Pipe({ name: 'safeHtml' })
 export class SafeHtmlPipe implements PipeTransform {
@@ -95,6 +98,7 @@ declare var window;
 class ToolInfoGroup {
   toolTextElement: svgjs.Text;
   toolTextBackGroundElement: svgjs.Rect;
+  toolTextGroup: svgjs.G;
 }
 
 class ToolShapeGroup {
@@ -115,8 +119,11 @@ var me;
   styleUrls: ['./monitor.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class MonitorComponent implements OnInit {
-  svgPanZoomOptions: SvgPanZoom.Options
+export class MonitorComponent implements OnInit, AfterViewInit {
+  svgPanZoomOptions: SvgPanZoom.Options;
+  visibleSideBar = false;
+  menuItems: MenuItem[];
+  layoutMenu: MenuItem[];
   layout: Rx.Observable<any>;
   svgDoc: svgjs.Doc;
   colorMap = [];
@@ -131,14 +138,29 @@ export class MonitorComponent implements OnInit {
 //  @ViewChild('localSvg') localSvg: ElementRef;
   tools: any;
   toolInfoSet: svgjs.G[] = [];
-  svg: any;
+  svg: SVGElement;
   filterNormalTool = false;
   lastToast: any;
-  config: Config;
+  private _config: LocalConfig;
+  get config(): LocalConfig {
+    // transform value for display
+    return this._config;
+  }
+  
+  @Input() set config(config: LocalConfig) {
+    this._config = config;
+    if (config) {
+
+      this.loadLayoutAndInitial();
+    }    
+  }
   msgs: Message[];
   timer: Rx.Subscription;
+  searchControl: FormControl;
+  searchToolMap: Map<string, ToolMapData> = new Map<string, ToolMapData>();
+  searchText = "";
 //  private items: MenuItem[];
-  constructor(public statusProvider: ToolStatusService
+  constructor(public statusProvider: ToolStatusService, private localConfig: LocalConfigService
     , private serverConfig: ServerConfigService, private activatedRoute: ActivatedRoute
     , private router: Router, private syncService: SyncService) {
     this.colorMap.push({ color: 'C0C0C0', desc: 'Unknown' });         //0:Unknown ,
@@ -201,45 +223,50 @@ export class MonitorComponent implements OnInit {
     this.portColorMap.push({ color: '404080', desc: 'USEM' });         //14:USEM
     this.portColorMap.push({ color: 'FFFF00', desc: 'USNE' });         //15:USNE
     me = this;
+    this.searchControl = new FormControl('');
+    this.menuItems = [
+      {
+          label: 'Layout',
+//          icon: 'fa fa-fw fa-file-o',
+          items: this.layoutMenu
+      }
+    ];
   }
 
   ngOnInit() {
-    let config: Config;
-    this.activatedRoute.params.pipe(concatMap( params => {
-      if (params['fab']) {
-        config = new Config();
-        config.currentFab = params['fab'];
-        return this.serverConfig.getShopList(config.currentFab)
-        .pipe(map(shopList => {
-          config.currentShop = shopList && shopList.length > 0 ? shopList[0] : '';
-          config.currentLayout = config.currentShop; // default layout == shop name
-          return of(config);
-        }));
-      } else {
-        const configString = localStorage.getItem('config');
-        if (!configString) {
-          return of(null);
-        } else {
-          config = JSON.parse(configString);
-          return of(config);
-        }
-      }
-    })).subscribe(returnConfig => {
-      if (!returnConfig || !config.currentLayout || !config.currentFab || !config.currentShop) {
-        this.router.navigate(['monitor/fab3', { shop: 'TFT3', layout: 'TFT3' }]);
-      } else {
-        this.router.navigate(['monitor/' + config.currentFab, { shop: config.currentShop, layout: config.currentLayout }]);
-      }
-      if (!config.refreshInterval) {
-        config.refreshInterval = 1;
-      }
-      localStorage.setItem('config', JSON.stringify(config));
-      this.config = config;
-      this.syncService.updateStatus({
-        'fab': this.config.currentFab
-      });
-      this.loadLayoutAndInitial();
+
+  }
+
+  ngAfterViewInit() {
+    console.log('ngAfterViewInit');
+    this.searchControl.valueChanges.pipe(debounceTime(700)).subscribe(m => {
+      this.filterSearchTool(m);
     });
+  }
+
+  filterSearchTool(input: string): any {
+    let upperText = input.toUpperCase();
+    this.toolMap.forEach((value, key) => {
+      const tools = value.toolShapeGroup;
+      const toolData = value.toolData;
+      if (tools && toolData) {
+        let display = toolData.id.startsWith(upperText) ? '' : 'none';
+
+        tools.forEach(tool => {
+          tool.toolShapeElement.style('display', display);
+          if (tool.toolInfoGroup) {
+            if (display == '') {
+              tool.toolInfoGroup.toolTextGroup.show();
+            } else {
+              tool.toolInfoGroup.toolTextGroup.hide();            
+            }
+          }
+        });
+      }
+    });
+  }
+
+  onReorganize(event) {
 
   }
 
@@ -361,6 +388,7 @@ export class MonitorComponent implements OnInit {
         const toolInfoGroup: ToolInfoGroup = {
           toolTextBackGroundElement: g.rect(),
           toolTextElement: g.text('0'),
+          toolTextGroup: g
         };
         const info = toolInfoGroup.toolTextElement;
         const backRect = toolInfoGroup.toolTextBackGroundElement;
@@ -449,7 +477,7 @@ export class MonitorComponent implements OnInit {
       this.svg = this.layoutContainer.nativeElement.querySelector('svg');
       this.svg.setAttribute('preserveAspectRatio', 'none');
       const svgClientRect = this.svg.getBoundingClientRect();
-      const svgDoc = new Doc(this.svg);
+      const svgDoc = new Doc(this.layoutContainer.nativeElement.querySelector('svg'));
       
       this.svgDoc = svgDoc;
       const ratioX = svgDoc.viewbox().width / svgClientRect.width;
@@ -473,6 +501,10 @@ export class MonitorComponent implements OnInit {
             this.toolClicked(event, this);
           });
           var me = this;
+          tool.on('mouseleave', () => {
+            this.msgs = [];
+          });
+    
           tool.on('mouseover', ($event) => {
             if (event.srcElement.attributes['tool_id']) {
               const toolId = event.srcElement.attributes['tool_id'].value;
@@ -480,10 +512,14 @@ export class MonitorComponent implements OnInit {
               const toolClientRect = event.srcElement.getClientRects()[0];
               const svgClientRect = this.svg.getClientRects()[0];
               me.msgs = [];
+              if (!this.toolMap.get(toolId)) {
+                console.log("toolMap return null. toolId=[" + toolId + "].")
+                return;
+              }
               const toolMapData = this.toolMap.get(toolId).toolData;
-              const toastMessage = `[${toolMapData.id}][${this.colorMap[+toolMapData.status].desc}][${toolMapData.comment}]`;
               if (toolMapData) {
-                me.msgs.push({severity:'success', summary: toolId
+                const toastMessage = `[${toolMapData.id}][${this.colorMap[+toolMapData.status].desc}][${toolMapData.comment}]`;
+                me.msgs.push({severity:'', summary: toolId
                           , detail: toastMessage});
               }
             }
@@ -544,7 +580,6 @@ export class MonitorComponent implements OnInit {
               const backRect = t.toolInfoGroup.toolTextBackGroundElement;
               t.toolInfoGroup.toolTextElement.text('' + (+toolData.moveCount));
               const bbox = t.toolInfoGroup.toolTextElement.bbox();
-              const toolClientRect = t.toolInfoGroup.toolTextElement.node.getClientRects()[0];
               backRect.width(bbox.width);
               backRect.height(bbox.height);
             }
@@ -577,7 +612,10 @@ export class MonitorComponent implements OnInit {
 
   // ngAfterViewInit() {
   // }
-
+  searchChange(event)
+  {
+    console.log(event);
+  }
   toggleFilter(event) {
     this.filterNormalTool = !this.filterNormalTool;
     this.toolMap.forEach((value, key) => {

@@ -1,7 +1,9 @@
-
-<app-layout>
+<div *ngIf="loading">
+    <img src="assets/images/cfm-app-loading.svg" />
+    <router-outlet></router-outlet>
+</div>
+<app-layout *ngIf="!loading">
     <div main-content>
         <router-outlet></router-outlet>
-
     </div>
 </app-layout>

@@ -1,10 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { NavMenuItem } from '../models/model.ui';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Router, ActivationEnd } from '@angular/router';
 import { ServerConfigService } from '../services/server-config.service';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, concatMap } from 'rxjs/operators';
 import { SyncService } from '../services/sync.service';
+import { UserService } from '../services/user.service';
+import { LocalConfigService } from '../services/local-config.service';
 
 @Component({
   selector: 'app-header',
@@ -14,15 +16,53 @@ import { SyncService } from '../services/sync.service';
 export class HeaderComponent implements OnInit {
 
   @Input() menuItems: NavMenuItem[] = [];
-  fabList: Observable<string[]>;
-  currentFab: Observable<string>;
-  constructor(public activatedRoute: ActivatedRoute, private router: Router, private serverConfig: ServerConfigService
-            , private syncService: SyncService) {
+  @Input() fabList: string[];
+  currentFab: string;
+  urlSegment0: string;
+  pictureUrl: string;
+  loading = false;
+  constructor(public activatedRoute: ActivatedRoute, private router: Router, private localConfig: LocalConfigService
+            , private syncService: SyncService, private userService: UserService, private serverConfig: ServerConfigService) {
   }
 
   ngOnInit() {
-    this.currentFab = this.syncService.getObservableStatus().pipe(map(m => m ? m.fab : ''));
-    this.fabList = this.serverConfig.getFabList();
+    this.router.events.subscribe(m => {
+      if (m instanceof ActivationEnd) {
+        this.currentFab = m.snapshot.params['fab'];
+        this.urlSegment0 = m.snapshot.url[0].path;
+      }
+    });
+
+    this.localConfig.configSubject.subscribe(m => {
+      this.currentFab = m.currentFab;
+    });
+
+    this.serverConfig.getFabList().subscribe(m => {
+      this.fabList = m;
+      this.localConfig.fabList = m;
+    });
+    this.userService.currentUserSubject.subscribe(res => {
+      if (res) {
+        this.userService.currentUserSubject.subscribe(m => {
+          console.log("header catch user changed.")
+          this.pictureUrl = 'http://jnpmdd01.cminl.oa/employee_pic/' + m.EmployeeId + '.jpg';
+        });
+      }
+    });
+
+
   }
 
+  selectFab(event: any, fab: string) {
+    console.log("selectFab clicked!");
+    if (fab !== this.currentFab) {
+      this.router.navigate([this.urlSegment0 + '/' + fab
+      , {}]);
+    }
+  }
+
+
+  signOut(event: any) {
+    this.userService.logOut();
+  }
 }

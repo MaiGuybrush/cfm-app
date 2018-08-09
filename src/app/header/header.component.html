@@ -17,7 +17,7 @@
          <a class="nav-link" mdbWavesEffect><span class="sr-only">(current)</span></a>
      </li>
      <li class="nav-item" *ngFor="let m of menuItems" routerLinkActive="active">
-        <a class="nav-link waves-light" mdbWavesEffect [routerLink]="m.link">{{m.title}}</a>
+        <a class="nav-link waves-light" mdbWavesEffect [routerLink]="m.link + (currentFab ? '/' + currentFab : '')">{{m.title}}</a>
      </li>
      <!-- Dropdown -->
      <!-- <li class="nav-item dropdown" dropdown>
@@ -41,24 +41,32 @@
          <input class="form-control mr-sm-2" type="text" placeholder="Search">
      </div>
  </form> -->
-<ul class="navbar-nav px-3">
+<ul class="navbar-nav">
   <li>
     <div class="btn-group" dropdown>
-        <button dropdownToggle type="button" class="btn btn-dark dropdown-toggle waves-light btn-sm" mdbWavesEffect>
-            {{currentFab | async}}
+        <button dropdownToggle type="button" class="btn btn-dark dropdown-toggle waves-light btn-sm" mdbWavesEffect [disabled]="loading">
+            <span *ngIf="!loading">{{currentFab}}</span><i *ngIf="loading" class="fa fa-spinner animated rotateIn infinite"></i>
         </button>    
         <div class="dropdown-menu dropdown-primary">
-            <a *ngFor="let fab of fabList | async" class="dropdown-item" [routerLink]="'monitor/' + fab">{{fab}}</a>
+            <!-- <a *ngFor="let fab of fabList" class="dropdown-item" [routerLink]="urlSegment0 + '/' + fab">{{fab}}</a> -->
+            <a *ngFor="let fab of fabList" class="dropdown-item" (click)="selectFab($event, fab)">{{fab}}</a>
         </div>
     </div>    
   </li>
 </ul>
-<ul class="navbar-nav px-3">
-  <li class="nav-item text-nowrap">
-    <a class="nav-link" href="#">Sign out</a>
-  </li>
+<ul class="navbar-nav px-5">
+    <li>
+      <div class="btn-group" dropdown>
+          <button dropdownToggle type="button" class="btn btn-dark waves-light" mdbWavesEffect [disabled]="loading" style="padding-top: 5px; padding-bottom: 5px;">
+            <app-avatar [src]="pictureUrl" [round]="true" [size]="35" ></app-avatar>                
+          </button>    
+          <div class="dropdown-menu dropdown-primary">
+            <a class="dropdown-item" (click)="signOut($event)">Log out</a>
+          </div>
+      </div>    
+    </li>
 </ul>
-
+  
 </links>
 <!-- Collapsible content -->
 

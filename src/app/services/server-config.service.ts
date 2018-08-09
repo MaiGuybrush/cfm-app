@@ -31,6 +31,14 @@ export class ServerConfigService {
     }));
   }
 
+  async getShopListAsync(fab: string): Promise<string[]> {
+    let data = await this.http.get<string[]>(Api.getOpiWebUrl(this.dummyShop) + 'config/getShopList?fab=' + fab).pipe(map(m => {
+      return m;
+    })).toPromise();
+    return data;
+  }
+
+
   getShopMap(): Observable<Map<string, Shop>> {
     return this.http.get<Map<string, Shop>>(Api.getOpiWebUrl(this.dummyShop) + 'config/getShopMap?productionOnly=true').pipe(map(m => {
       return m;

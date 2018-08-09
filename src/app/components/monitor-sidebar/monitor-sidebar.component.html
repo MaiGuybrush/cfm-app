@@ -1,0 +1,5 @@
+<p-sidebar [(visible)]="visibleSideBar" [baseZIndex]="10000" [style]="{'padding': '0 0 0 0'}">
+    <p-panelMenu [multiple]="false" [model]="model" [style]="{'width':'100%', 'margin-top': '30px'}"></p-panelMenu>
+    <p-progressSpinner *ngIf="loading"></p-progressSpinner>
+</p-sidebar>
+<button pButton type="button" (click)="visibleSideBar = true" icon="pi pi-arrow-right"></button>
