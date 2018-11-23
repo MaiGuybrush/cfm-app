@@ -33,6 +33,9 @@ import { JwtInterceptor } from './jwt-interceptor';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import { LayoutRawComponent } from './components/layout-raw/layout-raw.component';
+import { GlobalService } from './services/global-service';
+import { FileDropModule } from 'ngx-file-drop';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,7 +47,7 @@ import { LayoutRawComponent } from './components/layout-raw/layout-raw.component
     MonitorSidebarComponent,
     // InitializeComponent,
     AvatarComponent,
-    LayoutRawComponent,
+    LayoutRawComponent
   ],
   imports: [
     BrowserModule,
@@ -69,12 +72,14 @@ import { LayoutRawComponent } from './components/layout-raw/layout-raw.component
     AuthenticateModule,
     ProgressSpinnerModule,
     DragDropModule,
-    GrowlModule
+    GrowlModule,
+    FileDropModule
   ],
   providers: [
     ToolStatusService,
     ServerConfigService,
     UserService,
+    GlobalService,
     SyncService,
     {
       provide: HTTP_INTERCEPTORS,

@@ -44,7 +44,7 @@ export class HeaderComponent implements OnInit {
     this.userService.currentUserSubject.subscribe(res => {
       if (res) {
         this.userService.currentUserSubject.subscribe(m => {
-          console.log("header catch user changed.")
+          console.log("header catch user changed.");
           this.pictureUrl = 'http://jnpmdd01.cminl.oa/employee_pic/' + m.EmployeeId + '.jpg';
         });
       }

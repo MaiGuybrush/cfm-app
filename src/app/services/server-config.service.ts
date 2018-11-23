@@ -5,6 +5,7 @@ import { map, filter, scan } from 'rxjs/operators';
 import { Api } from './api';
 import { Shop } from '../models/shop';
 import { LayoutInfo } from '../models/layout-info';
+import { GlobalService } from './global-service';
 
 /*
   Generated class for the ConfigProvider provider.
@@ -15,24 +16,24 @@ import { LayoutInfo } from '../models/layout-info';
 @Injectable()
 export class ServerConfigService {
   dummyShop = 'tft3';
-  constructor(public http: HttpClient) {
+  constructor(public http: HttpClient, private global: GlobalService) {
     console.log('Hello ConfigProvider Provider');
   }
 
   getFabList(): Observable<string[]> {
-    return this.http.get<string[]>(Api.getOpiWebUrl(this.dummyShop) + 'config/getFabList').pipe(map(m => {
+    return this.http.get<string[]>(this.global.getOpiWebUrl(this.dummyShop) + '/config/getFabList').pipe(map(m => {
       return m;
     }));
   }
 
   getShopList(fab: string): Observable<string[]> {
-    return this.http.get<string[]>(Api.getOpiWebUrl(this.dummyShop) + 'config/getShopList?fab=' + fab).pipe(map(m => {
+    return this.http.get<string[]>(this.global.getOpiWebUrl(this.dummyShop) + '/config/getShopList?fab=' + fab).pipe(map(m => {
       return m;
     }));
   }
 
   async getShopListAsync(fab: string): Promise<string[]> {
-    let data = await this.http.get<string[]>(Api.getOpiWebUrl(this.dummyShop) + 'config/getShopList?fab=' + fab).pipe(map(m => {
+    const data = await this.http.get<string[]>(this.global.getOpiWebUrl(this.dummyShop) + '/config/getShopList?fab=' + fab).pipe(map(m => {
       return m;
     })).toPromise();
     return data;
@@ -40,13 +41,14 @@ export class ServerConfigService {
 
 
   getShopMap(): Observable<Map<string, Shop>> {
-    return this.http.get<Map<string, Shop>>(Api.getOpiWebUrl(this.dummyShop) + 'config/getShopMap?productionOnly=true').pipe(map(m => {
+    return this.http.get<Map<string, Shop>>(this.global.getOpiWebUrl(this.dummyShop)
+     + '/config/getShopMap?productionOnly=true').pipe(map(m => {
       return m;
     }));
   }
 
   getLayoutList(fab: string, shop: string): Observable<string[]> {
-    let url = Api.getOpiApiUrl() + 'layout?' + 'fab=' + fab;
+    let url = this.global.getOpiApiUrl() + '/layout?' + 'fab=' + fab;
     url += '&shop=';
     url += shop ? shop : '';
     return this.http.get<string[]>(url).pipe(map(m => {
@@ -65,8 +67,8 @@ export class ServerConfigService {
 
   getLayout(layoutID: string, fab: string, shop: string): Observable<any> {
     const layoutKey = this.getLayoutKey(layoutID, fab, shop);
-    return this.http.get<LayoutInfo>(Api.getOpiApiUrl() + 'layout/' + layoutID
-    + '?fab=' + fab + '&shop=' + shop + '&useFunc=&employeeId=' + 'guy.mai')
+    return this.http.get<LayoutInfo>(this.global.getOpiApiUrl() + '/layout/' + layoutID
+    + '?fab=' + fab + '&shop=' + shop + '&useFunc=')
     .pipe(
       map(layout => {
         return layout.Content;

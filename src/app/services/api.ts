@@ -17,24 +17,7 @@ enum ApiSource {
 @Injectable()
 export class Api {
 
-    public static source: ApiSource = window.cordova ? ApiSource.ProdOutInx : ApiSource.Dev;
-    public static getOpiApiUrl(): string {
-        switch (Api.source) {
 
-            case ApiSource.Dev:
-                return 'http://HP06609P.cminl.oa/apps/mes/opi/api/';
-            case ApiSource.ProdInInx:
-                return 'http://tncimap.cminl.oa/apps/mesclient/api/';
-        }
-    }
-    public static getOpiWebUrl(shop: string): string {
-        switch (Api.source) {
-            case ApiSource.Dev:
-                return 'http://HP06609P.cminl.oa/apps/mes/opi/zh-tw/{shop}/'.replace('{shop}', shop);
-            case ApiSource.ProdInInx:
-                return 'http://tncimap.cminl.oa/apps/mesclient/zh-tw/{shop}/'.replace('{shop}', shop);
-        }
-    }
     static toCamel(o): any {
         let newO, origKey, newKey, value;
         if (o instanceof Array) {

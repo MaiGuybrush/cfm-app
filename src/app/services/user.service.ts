@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, BehaviorSubject, of } from 'rxjs';
-import { User } from './user';
 import { HttpClient } from '@angular/common/http';
 import { Api } from './api';
 import { InxSsoPage } from '../models/inx-sso-page';
 import { tap } from 'rxjs/operators';
 import { EmpInfo } from '../models/emp-info';
 import { AuthInfo } from '../models/auth-info';
+import { GlobalService } from './global-service';
 
 
 
@@ -24,7 +24,7 @@ export class UserService {
     return this._currentUser;
   }
   private jsonFileURL = './assets/config/Config.json';
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private global: GlobalService) {
     // let lastAuthRes = localStorage.getItem("currentUser");
     // if (lastAuthRes) {
     //   let res = JSON.parse(lastAuthRes)
@@ -45,11 +45,11 @@ export class UserService {
   }
 
   public logIn(certKey: string, ssoTicket: string): Observable<any> {
-    return this.http.post<AuthInfo>(Api.getOpiApiUrl() + "apiauth"
+    return this.http.post<AuthInfo>(this.global.getOpiApiUrl() + "/apiauth"
     , { "CertificateKey": certKey, "SsoTicket": ssoTicket }).pipe(tap(res => {
 //        localStorage["currentUser"] = JSON.stringify(res);
         this._currentUser = res.empInfo;
-        this._token = res.token;
+        this._token = res.token
         console.log('user changed publish!');
         this.currentUserSubject.next(this._currentUser);
     }));  
@@ -104,7 +104,7 @@ export class UserService {
   }
 
   private getInxSSOPage(): Observable<InxSsoPage> {
-    return this.http.get<InxSsoPage>(Api.getOpiApiUrl() + "ApiAuth?category=SSOURL");
+    return this.http.get<InxSsoPage>(this.global.getOpiApiUrl() + "/ApiAuth?category=SSOURL");
   }
 
   public logOut() {

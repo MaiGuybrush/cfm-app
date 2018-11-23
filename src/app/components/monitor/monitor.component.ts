@@ -1,4 +1,5 @@
-import { Component, ViewChildren, ViewChild, ElementRef, OnInit, OnDestroy, QueryList, AfterViewInit, Pipe, PipeTransform, ViewEncapsulation, Input } from '@angular/core';
+import { Component, ViewChildren, ViewChild, ElementRef, OnInit, OnDestroy, QueryList
+  , AfterViewInit, Pipe, PipeTransform, ViewEncapsulation, Input } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { ToolStatusService } from '../../services/tool-status.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -69,7 +70,7 @@ const svgEventHander = {
       }
 
       // Pan only the difference
-      instance.panBy({ x: ev.deltaX - pannedX, y: ev.deltaY - pannedY })
+      instance.panBy({ x: ev.deltaX - pannedX, y: ev.deltaY - pannedY });
       pannedX = ev.deltaX;
       pannedY = ev.deltaY;
     });
@@ -112,14 +113,14 @@ class ToolMapData {
   toolShapeGroup: ToolShapeGroup[] = [];
   toolData: any = null;
 }
-var me;
+let me;
 @Component({
   selector: 'app-monitor',
   templateUrl: './monitor.component.html',
   styleUrls: ['./monitor.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class MonitorComponent implements OnInit, AfterViewInit {
+export class MonitorComponent implements OnInit, AfterViewInit, OnDestroy {
   svgPanZoomOptions: SvgPanZoom.Options;
   visibleSideBar = false;
   menuItems: MenuItem[];
@@ -146,13 +147,13 @@ export class MonitorComponent implements OnInit, AfterViewInit {
     // transform value for display
     return this._config;
   }
-  
+
   @Input() set config(config: LocalConfig) {
     this._config = config;
     if (config) {
 
       this.loadLayoutAndInitial();
-    }    
+    }
   }
   msgs: Message[];
   timer: Rx.Subscription;
@@ -163,65 +164,65 @@ export class MonitorComponent implements OnInit, AfterViewInit {
   constructor(public statusProvider: ToolStatusService, private localConfig: LocalConfigService
     , private serverConfig: ServerConfigService, private activatedRoute: ActivatedRoute
     , private router: Router, private syncService: SyncService) {
-    this.colorMap.push({ color: 'C0C0C0', desc: 'Unknown' });         //0:Unknown ,
-    this.colorMap.push({ color: '00FF00', desc: 'Run' });             //1:RUN     ,1000
-    this.colorMap.push({ color: 'ACFFAC', desc: 'Monitor Run' });     //2:MRUN    ,1100
-    this.colorMap.push({ color: '65CA00', desc: 'E-Run' });           //3:ERUN    ,1200
-    this.colorMap.push({ color: 'FFFF00', desc: 'Idle' });            //4:IDLE    ,2000
-    this.colorMap.push({ color: '80FFFF', desc: 'P-Setup' });         //5:PSTUP   ,2100
-    this.colorMap.push({ color: '00CACA', desc: 'E-Setup' });         //6:ESTUP   ,2200
-    this.colorMap.push({ color: '008000', desc: 'Chang Material' });  //7:CHMT    ,2300
-    this.colorMap.push({ color: 'FF00FF', desc: 'AMHS' });            //8:AMHS    ,2400
-    this.colorMap.push({ color: 'FF0000', desc: 'Down' });            //9:DOWN    ,4000
-    this.colorMap.push({ color: 'FF8000', desc: 'PM' });              //10:PM      ,4100
-    this.colorMap.push({ color: '804040', desc: 'Warm up' });         //11:WARMUP  ,4200
-    this.colorMap.push({ color: '0000FF', desc: 'Eng lend' });        //12:ENG     ,4300
-    this.colorMap.push({ color: 'FF80FF', desc: 'Show down' });       //13:SHDW    ,6000
-    this.colorMap.push({ color: 'FEB18D', desc: 'PM2' });             //14:PM2     ,4400
-    this.colorMap.push({ color: 'FF0000', desc: 'PE down' });         //15:PEDown  ,4500
-    this.colorMap.push({ color: '804040', desc: 'EQ warm up' });      //16:EQWarmUp,4201
-    this.colorMap.push({ color: '804040', desc: 'PE warm up' });      //17:PEWarmUp,4202
-    this.colorMap.push({ color: '804040', desc: 'Other warn up' });   //18:OtherWUp,4203
-    this.colorMap.push({ color: '808080', desc: 'Norel' });           //19:NOREL   ,nore
-    this.colorMap.push({ color: '9700EE', desc: 'Technical Use' });        //20:Technical Use, 3000
-    this.colorMap.push({ color: '9700EE', desc: 'Equipment Experiment' }); //21:Equipment Experiment, 3100
-    this.colorMap.push({ color: 'FF0000', desc: 'Process Experiment' });   //22:Process Experiment, 3200
-    this.colorMap.push({ color: 'FF00FF', desc: 'Down Shooting' });        //23:Down Shooting, 4800
-    this.colorMap.push({ color: '0080FF', desc: 'Technical Use' });        //24:Technical Use, ENG
-    this.colorMap.push({ color: 'FF0000', desc: 'Technical Use' });        //25:Technical Use,ENGDOWN
-    this.colorMap.push({ color: '808080', desc: 'PSetup' });               //26:PSetup, SETUP
-    this.colorMap.push({ color: 'FF0000', desc: 'FACDWN' });               //27:FACDWN, FACDWN
-    this.colorMap.push({ color: '009932', desc: 'P-Run' });                //28:P-Run,P_RUN
-    this.colorMap.push({ color: '80FFFF', desc: 'ENDMON' });               //29:ENDMON,ENDMON
-    this.colorMap.push({ color: '80FFFF', desc: 'WAITSETUP' });            //30:WAITSETUP,WAITSETUP
-    this.colorMap.push({ color: 'FF33CC', desc: 'WAITENG' });              //31:WAITENG,WAITENG
-    this.colorMap.push({ color: 'FF0000', desc: 'AGVDOWN' });              //32:AGVDOWN,AGVDOWN
-    this.colorMap.push({ color: 'FF0000', desc: 'STKDOWN' });              //33:STKDOWN,STKDOWN
-    this.colorMap.push({ color: 'FF8040', desc: 'MATSHT' });               //34:MATSHT,MATSHT
-    this.colorMap.push({ color: 'BC8CBF', desc: 'STK Warning' });          //35:STK Warning,WARNING
-    this.colorMap.push({ color: 'ABA000', desc: 'STK FULL' });             //36:STK FULL,FULL
-    this.modeColorMap.push('C0C0C0');  //unknown
-    this.modeColorMap.push('008000');  //MANU
-    this.modeColorMap.push('000080');  //CONT
-    this.modeColorMap.push('A60000');  //MONI
-    this.modeColorMap.push('FF8040');  //?
-    this.modeColorMap.push('C0C0C0');  //?
-    this.portColorMap.push({ color: 'C0C0C0', desc: 'Unknown' });      //0:Unknown
-    this.portColorMap.push({ color: '40FF00', desc: 'BUSY' });         //1:BUSY
-    this.portColorMap.push({ color: '0000FF', desc: 'DOWN' });         //2:DOWN
-    this.portColorMap.push({ color: '008080', desc: 'FREE' });         //3:FREE 
-    this.portColorMap.push({ color: 'FFFF00', desc: 'LDCM' });         //4:LDCM
-    this.portColorMap.push({ color: 'FF0000', desc: 'LDCP' });         //5:LDCP
-    this.portColorMap.push({ color: 'FFFFFF', desc: 'LDRQ' });         //6:LDRQ
-    this.portColorMap.push({ color: 'CC33FF', desc: 'MANT' });         //7:MANT 
-    this.portColorMap.push({ color: '663399', desc: 'PAUS' });         //8:PAUS
-    this.portColorMap.push({ color: 'FF80FF', desc: 'UDCM' });         //9:UDCM
-    this.portColorMap.push({ color: '4080FF', desc: 'UDRQ' });         //10:UDRQ
-    this.portColorMap.push({ color: '067CF2', desc: 'ULRQ' });         //11:ULRQ 
-    this.portColorMap.push({ color: '008080', desc: 'UNUS' });         //12:UNUS 
-    this.portColorMap.push({ color: '408080', desc: 'USED' });         //13:USED
-    this.portColorMap.push({ color: '404080', desc: 'USEM' });         //14:USEM
-    this.portColorMap.push({ color: 'FFFF00', desc: 'USNE' });         //15:USNE
+    this.colorMap.push({ color: 'C0C0C0', desc: 'Unknown' });         // 0:Unknown ,
+    this.colorMap.push({ color: '00FF00', desc: 'Run' });             // 1:RUN     ,1000
+    this.colorMap.push({ color: 'ACFFAC', desc: 'Monitor Run' });     // 2:MRUN    ,1100
+    this.colorMap.push({ color: '65CA00', desc: 'E-Run' });           // 3:ERUN    ,1200
+    this.colorMap.push({ color: 'FFFF00', desc: 'Idle' });            // 4:IDLE    ,2000
+    this.colorMap.push({ color: '80FFFF', desc: 'P-Setup' });         // 5:PSTUP   ,2100
+    this.colorMap.push({ color: '00CACA', desc: 'E-Setup' });         // 6:ESTUP   ,2200
+    this.colorMap.push({ color: '008000', desc: 'Chang Material' });  // 7:CHMT    ,2300
+    this.colorMap.push({ color: 'FF00FF', desc: 'AMHS' });            // 8:AMHS    ,2400
+    this.colorMap.push({ color: 'FF0000', desc: 'Down' });            // 9:DOWN    ,4000
+    this.colorMap.push({ color: 'FF8000', desc: 'PM' });              // 10:PM      ,4100
+    this.colorMap.push({ color: '804040', desc: 'Warm up' });         // 11:WARMUP  ,4200
+    this.colorMap.push({ color: '0000FF', desc: 'Eng lend' });        // 12:ENG     ,4300
+    this.colorMap.push({ color: 'FF80FF', desc: 'Show down' });       // 13:SHDW    ,6000
+    this.colorMap.push({ color: 'FEB18D', desc: 'PM2' });             // 14:PM2     ,4400
+    this.colorMap.push({ color: 'FF0000', desc: 'PE down' });         // 15:PEDown  ,4500
+    this.colorMap.push({ color: '804040', desc: 'EQ warm up' });      // 16:EQWarmUp,4201
+    this.colorMap.push({ color: '804040', desc: 'PE warm up' });      // 17:PEWarmUp,4202
+    this.colorMap.push({ color: '804040', desc: 'Other warn up' });   // 18:OtherWUp,4203
+    this.colorMap.push({ color: '808080', desc: 'Norel' });           // 19:NOREL   ,nore
+    this.colorMap.push({ color: '9700EE', desc: 'Technical Use' });        // 20:Technical Use, 3000
+    this.colorMap.push({ color: '9700EE', desc: 'Equipment Experiment' }); // 21:Equipment Experiment, 3100
+    this.colorMap.push({ color: 'FF0000', desc: 'Process Experiment' });   // 22:Process Experiment, 3200
+    this.colorMap.push({ color: 'FF00FF', desc: 'Down Shooting' });        // 23:Down Shooting, 4800
+    this.colorMap.push({ color: '0080FF', desc: 'Technical Use' });        // 24:Technical Use, ENG
+    this.colorMap.push({ color: 'FF0000', desc: 'Technical Use' });        // 25:Technical Use,ENGDOWN
+    this.colorMap.push({ color: '808080', desc: 'PSetup' });               // 26:PSetup, SETUP
+    this.colorMap.push({ color: 'FF0000', desc: 'FACDWN' });               // 27:FACDWN, FACDWN
+    this.colorMap.push({ color: '009932', desc: 'P-Run' });                // 28:P-Run,P_RUN
+    this.colorMap.push({ color: '80FFFF', desc: 'ENDMON' });               // 29:ENDMON,ENDMON
+    this.colorMap.push({ color: '80FFFF', desc: 'WAITSETUP' });            // 30:WAITSETUP,WAITSETUP
+    this.colorMap.push({ color: 'FF33CC', desc: 'WAITENG' });              // 31:WAITENG,WAITENG
+    this.colorMap.push({ color: 'FF0000', desc: 'AGVDOWN' });              // 32:AGVDOWN,AGVDOWN
+    this.colorMap.push({ color: 'FF0000', desc: 'STKDOWN' });              // 33:STKDOWN,STKDOWN
+    this.colorMap.push({ color: 'FF8040', desc: 'MATSHT' });               // 34:MATSHT,MATSHT
+    this.colorMap.push({ color: 'BC8CBF', desc: 'STK Warning' });          // 35:STK Warning,WARNING
+    this.colorMap.push({ color: 'ABA000', desc: 'STK FULL' });             // 36:STK FULL,FULL
+    this.modeColorMap.push('C0C0C0');  // unknown
+    this.modeColorMap.push('008000');  // MANU
+    this.modeColorMap.push('000080');  // CONT
+    this.modeColorMap.push('A60000');  // MONI
+    this.modeColorMap.push('FF8040');  // ?
+    this.modeColorMap.push('C0C0C0');  // ?
+    this.portColorMap.push({ color: 'C0C0C0', desc: 'Unknown' });      // 0:Unknown
+    this.portColorMap.push({ color: '40FF00', desc: 'BUSY' });         // 1:BUSY
+    this.portColorMap.push({ color: '0000FF', desc: 'DOWN' });         // 2:DOWN
+    this.portColorMap.push({ color: '008080', desc: 'FREE' });         // 3:FREE
+    this.portColorMap.push({ color: 'FFFF00', desc: 'LDCM' });         // 4:LDCM
+    this.portColorMap.push({ color: 'FF0000', desc: 'LDCP' });         // 5:LDCP
+    this.portColorMap.push({ color: 'FFFFFF', desc: 'LDRQ' });         // 6:LDRQ
+    this.portColorMap.push({ color: 'CC33FF', desc: 'MANT' });         // 7:MANT
+    this.portColorMap.push({ color: '663399', desc: 'PAUS' });         // 8:PAUS
+    this.portColorMap.push({ color: 'FF80FF', desc: 'UDCM' });         // 9:UDCM
+    this.portColorMap.push({ color: '4080FF', desc: 'UDRQ' });         // 10:UDRQ
+    this.portColorMap.push({ color: '067CF2', desc: 'ULRQ' });         // 11:ULRQ
+    this.portColorMap.push({ color: '008080', desc: 'UNUS' });         // 12:UNUS
+    this.portColorMap.push({ color: '408080', desc: 'USED' });         // 13:USED
+    this.portColorMap.push({ color: '404080', desc: 'USEM' });         // 14:USEM
+    this.portColorMap.push({ color: 'FFFF00', desc: 'USNE' });         // 15:USNE
     me = this;
     this.searchControl = new FormControl('');
     this.menuItems = [
@@ -245,20 +246,20 @@ export class MonitorComponent implements OnInit, AfterViewInit {
   }
 
   filterSearchTool(input: string): any {
-    let upperText = input.toUpperCase();
+    const upperText = input.toUpperCase();
     this.toolMap.forEach((value, key) => {
       const tools = value.toolShapeGroup;
       const toolData = value.toolData;
       if (tools && toolData) {
-        let display = toolData.id.startsWith(upperText) ? '' : 'none';
+        const display = toolData.id.startsWith(upperText) ? '' : 'none';
 
         tools.forEach(tool => {
           tool.toolShapeElement.style('display', display);
           if (tool.toolInfoGroup) {
-            if (display == '') {
+            if (display === '') {
               tool.toolInfoGroup.toolTextGroup.show();
             } else {
-              tool.toolInfoGroup.toolTextGroup.hide();            
+              tool.toolInfoGroup.toolTextGroup.hide();
             }
           }
         });
@@ -273,9 +274,9 @@ export class MonitorComponent implements OnInit, AfterViewInit {
   // Note: this means svgPanZoom
   zoomHandler(event) {
     console.log(event);
-    
+
     me.toolInfoSet.forEach(m => {
-      let zoom = event; //me.svgPanZoom.getZoom();      
+      let zoom = event; // me.svgPanZoom.getZoom();
       if (zoom >= 1 && zoom < 1.7) {
         return;
       }
@@ -286,8 +287,7 @@ export class MonitorComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnDestroy()
-  {
+  ngOnDestroy() {
     if (this.timer) {
       this.timer.unsubscribe();
     }
@@ -313,7 +313,7 @@ export class MonitorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  toolClicked(event: any, me: MonitorComponent) {
+  toolClicked(event: any) {
     if (this.toolMap.get(event.srcElement.getAttribute('tool_id'))
       && this.toolMap.get(event.srcElement.getAttribute('tool_id')).toolData) {
       console.log('tool[' + event.srcElement.getAttribute('tool_id') + '] Clicked');
@@ -339,7 +339,7 @@ export class MonitorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  addExtraElement(toolShapeGroup: ToolShapeGroup, me: MonitorComponent, toolClientRect: any
+  addExtraElement(toolShapeGroup: ToolShapeGroup, toolClientRect: any
     , svgDoc: svgjs.Doc, svgClientRect: any, ratioX: number, ratioY: number) {
     const tool = toolShapeGroup.toolShapeElement;
     const id: string = this.toolMap[tool.attr('id')];
@@ -414,7 +414,7 @@ export class MonitorComponent implements OnInit, AfterViewInit {
     //   while (this.svg.childNodes.length > 0) {
     //     this.svg.childNodes[0].remove();
     //   }
-              
+
     //   for (let i = this.svg.attributes.length - 1; i >= 0; i--) {
     //     if (this.svg.attributes[i].name.startsWith('_ngcontent')) {
     //       continue;
@@ -469,7 +469,7 @@ export class MonitorComponent implements OnInit, AfterViewInit {
       // for (let i = 0; i < serverSvg.attributes.length; i++) {
       //   this.svg.setAttribute(serverSvg.attributes[i].name, serverSvg.attributes[i].value);
       // }
-              
+
       // while (serverSvg.childNodes.length > 0) {
       //   this.svg.appendChild(serverSvg.childNodes[0]);
       // }
@@ -478,7 +478,7 @@ export class MonitorComponent implements OnInit, AfterViewInit {
       this.svg.setAttribute('preserveAspectRatio', 'none');
       const svgClientRect = this.svg.getBoundingClientRect();
       const svgDoc = new Doc(this.layoutContainer.nativeElement.querySelector('svg'));
-      
+
       this.svgDoc = svgDoc;
       const ratioX = svgDoc.viewbox().width / svgClientRect.width;
       const ratioY = svgDoc.viewbox().height / svgClientRect.height;
@@ -495,31 +495,30 @@ export class MonitorComponent implements OnInit, AfterViewInit {
         }
         if (tool.attr('tool_id') && tool.attr('tool_id') !== 'null') {
           tool.click(($event) => {
-            this.toolClicked(event, this);
+            this.toolClicked(event);
           });
           tool.on('contextmenu', ($event) => {
-            this.toolClicked(event, this);
+            this.toolClicked(event);
           });
-          var me = this;
           tool.on('mouseleave', () => {
             this.msgs = [];
           });
-    
+
           tool.on('mouseover', ($event) => {
             if (event.srcElement.attributes['tool_id']) {
-              const toolId = event.srcElement.attributes['tool_id'].value;
+              const toolID = event.srcElement.attributes['tool_id'].value;
               // console.log('mouse over tool-' + event.srcElement.attributes['tool_id'].value);
-              const toolClientRect = event.srcElement.getClientRects()[0];
-              const svgClientRect = this.svg.getClientRects()[0];
+              const toolsClientRect = event.srcElement.getClientRects()[0];
+              const svgRect = this.svg.getClientRects()[0];
               me.msgs = [];
-              if (!this.toolMap.get(toolId)) {
-                console.log("toolMap return null. toolId=[" + toolId + "].")
+              if (!this.toolMap.get(toolID)) {
+                console.log("toolMap return null. toolId=[" + toolID + "].");
                 return;
               }
-              const toolMapData = this.toolMap.get(toolId).toolData;
+              const toolMapData = this.toolMap.get(toolID).toolData;
               if (toolMapData) {
                 const toastMessage = `[${toolMapData.id}][${this.colorMap[+toolMapData.status].desc}][${toolMapData.comment}]`;
-                me.msgs.push({severity:'', summary: toolId
+                me.msgs.push({severity: '', summary: toolID
                           , detail: toastMessage});
               }
             }
@@ -536,7 +535,7 @@ export class MonitorComponent implements OnInit, AfterViewInit {
           toolGroup.toolShapeElement = tool;
           this.toolMap.get(toolId).toolShapeGroup.push(toolGroup);
           if (firstFound) {
-            this.addExtraElement(toolGroup, this, toolClientRect, svgDoc, svgClientRect, ratioX, ratioY);
+            this.addExtraElement(toolGroup, toolClientRect, svgDoc, svgClientRect, ratioX, ratioY);
           }
         }
       });
@@ -612,8 +611,7 @@ export class MonitorComponent implements OnInit, AfterViewInit {
 
   // ngAfterViewInit() {
   // }
-  searchChange(event)
-  {
+  searchChange(event) {
     console.log(event);
   }
   toggleFilter(event) {
