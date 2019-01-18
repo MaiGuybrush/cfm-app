@@ -8,16 +8,15 @@ import { UserService } from './services/user.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   title = 'app';
   loading = false;
   // public static certKey: string;
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, 
+  constructor(private router: Router, private activatedRoute: ActivatedRoute,
     private localConfig: LocalConfigService, private userService: UserService) {
 
   }
-  ngOnInit()
-  {
+  ngOnInit() {
     // let url = this.userService.getUrlInfo();
     // let certKey = this.getCertificateKey(url);
     // if (certKey) {
@@ -29,7 +28,7 @@ export class AppComponent implements OnInit{
     // if (!this.localConfig.initialized) {
     //   this.router.navigate(['initialize'], {
     //     queryParams: {
-    //       'fab': url.searchObject['fab'], 
+    //       'fab': url.searchObject['fab'],
     //       'shop': url.searchObject['shop'],
     //       'layout': url.searchObject['layout'],
     //     }
@@ -39,14 +38,15 @@ export class AppComponent implements OnInit{
   }
 
   public parseURL(url) {
-    var parser = document.createElement('a'),
-      searchObject = {},
-      queries, split, i;
+    const parser = document.createElement('a');
+    const searchObject = {};
+    const queries = parser.search.replace(/^\?/, '').split('&');
+    let split;
+
     // Let the browser do the work
     parser.href = url;
     // Convert query string to object
-    queries = parser.search.replace(/^\?/, '').split('&');
-    for (i = 0; i < queries.length; i++) {
+    for (let i = 0; i < queries.length; i++) {
       split = queries[i].split('=');
       searchObject[split[0]] = split[1];
     }
@@ -65,14 +65,14 @@ export class AppComponent implements OnInit{
 
 
   public getCertificateKey(url: any): any {
-    let certKeyString = url.searchObject["CertificateKey"];
+    const certKeyString = url.searchObject["CertificateKey"];
     if (certKeyString) {
-      let certKey = decodeURIComponent(certKeyString);
+      const certKey = decodeURIComponent(certKeyString);
       console.log('certKey:', certKey);
       return certKey;
     }
     return null;
   }
 
-  
+
 }

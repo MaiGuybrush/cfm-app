@@ -7,6 +7,39 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon1.ico">
+  <script  type="text/javascript">
+    if (!window.chrome) {
+      var ws = new ActiveXObject('WScript.Shell');
+        var winChromePath = 'C:/Documents and Settings/All Users/Application Data/WinNexus/WPD/GoogleChrome/App/Chrome-bin/chrome.exe';
+        var x86ChromePath = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+        var x64ChromePath = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe';
+        var TransUrl = document.location.href;
+        try {
+            ws.Exec(winChromePath + ' ' + TransUrl);
+            window.opener = null;
+            window.open('', '_self');
+            window.close();
+        } catch (err) {
+            try {
+                ws.Exec(x86ChromePath + ' ' + TransUrl);
+                window.opener = null;
+                window.open('', '_self');
+                window.close();
+            } catch (err) {
+                try {
+                    ws.Exec(x64ChromePath + ' ' + TransUrl);
+                    window.opener = null;
+                    window.open('', '_self');
+                    window.close();
+                } catch (err) {
+                    if (confirm("IE瀏覽器不再支援 iEP 1.核價 模組, 請使用Chrome瀏覽器!按確定後將自動安裝/開啟Chrome瀏覽器, 或取消用IE開啟但可能無法順利顯示或簽核(安裝時有問題可參考首頁HelpDesk)")) {
+                        location.href = 'winnexus://api/1/software/wdf?name=d6be696e2aac24b03d0d39c6e15b621d678fcbd5.wdf';
+                    }
+                }
+            }
+        }
+    }
+  </script>
 </head>
 <body>
   <app-root></app-root>

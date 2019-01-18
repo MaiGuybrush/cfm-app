@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild, Output } from '@angular/core';
 import { ServerConfigService } from '../../services/server-config.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -9,12 +9,13 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class LayoutRawComponent implements OnInit {
   svg: SVGElement;
+  svgHtml: HTMLElement;
   @Input() fab: string;
   @Input() shop: string;
   @Input() layout: string;
   @ViewChild('layoutContainer') layoutContainer: ElementRef;
 
-  constructor(private serverConfig: ServerConfigService) { 
+  constructor(private serverConfig: ServerConfigService) {
 
   }
 
@@ -31,5 +32,4 @@ export class LayoutRawComponent implements OnInit {
 
     });
   }
-
 }

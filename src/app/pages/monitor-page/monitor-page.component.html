@@ -1,2 +1,3 @@
 
-<app-monitor [config]="currentConfig"></app-monitor>
+<app-monitor *ngIf="!showDetail" [config]="currentConfig" (toolClicked)="onToolClicked($event)"></app-monitor>
+<app-tool-detail *ngIf="showDetail" [toolSvgRaw]="toolDetailSvg"></app-tool-detail>

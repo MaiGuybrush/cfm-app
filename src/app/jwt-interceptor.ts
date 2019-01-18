@@ -30,7 +30,9 @@ export class JwtInterceptor implements HttpInterceptor {
             (err: any) => {
                 if (err instanceof HttpErrorResponse) {
                     if (err.status === 401) {
-                            
+                        if (err.message.includes("Token Expired")) {
+                            this.userService.logOut();
+                        }
                     }
                 }
             }

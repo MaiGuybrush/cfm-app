@@ -10,6 +10,7 @@
         <span>{{layout}}</span>        
         <span class="pull-right layout-action-icon"><i class="fa fa-trash-o" aria-hidden="true"></i></span>
         <span class="pull-right layout-action-icon"><i class="fa fa-upload" aria-hidden="true"></i></span>
+        <span class="pull-right layout-action-icon"><i class="fa fa-retweet" aria-hidden="true" (click)="easyLayout({'fab': fab, 'layout': layout})"></i></span>
       </div>
       <!-- <div class="card-body" [ngStyle]="{'background-image': 'url(' + layout + ')'}"> -->
       <div class="card-body" style="height:255px;width:100%;padding:0px">
@@ -30,9 +31,14 @@
         <!-- <svg width="100%" height="100%">       
             <image [attr.xlink:href]="layout" width="100%" height="100%"/>    
         </svg>       -->
-        <div id="drop_zone" (drop)="dropHandler(event);">
+        <div id="drop_zone">
           <i class="fa fa-plus" style="font-size:12em; color:lightgray;"></i>
-          <div style="font-size:1.8em; color:lightgray;">拖拉檔案至此</div>
+          <div style="font-size:1.8em; color:lightgray;">
+            <file-drop headertext="拖拉檔案至此" (onFileDrop)="dropHandler($event)" 
+              (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
+                <span></span>
+            </file-drop>        
+          </div>
         </div>
 
       </div>

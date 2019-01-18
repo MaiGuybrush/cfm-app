@@ -49,11 +49,10 @@ export class UserService {
     , { "CertificateKey": certKey, "SsoTicket": ssoTicket }).pipe(tap(res => {
 //        localStorage["currentUser"] = JSON.stringify(res);
         this._currentUser = res.empInfo;
-        this._token = res.token
+        this._token = res.empInfo.Token;
         console.log('user changed publish!');
         this.currentUserSubject.next(this._currentUser);
-    }));  
- 
+    }));
   }
 
   public clearLoginInfo() {
@@ -137,7 +136,16 @@ export class UserService {
       })[0] || null;
   }
 
-
+//   public verifyCertificateKey(certKey: string): Observable<AuthInfo>  {
+//     return this.http.get<AuthInfo>(this.global.getOpiApiUrl() + "/apiauth?category=Verify&CertificateKey=" + certKey)
+//     .pipe(tap(res => {
+// //        localStorage["currentUser"] = JSON.stringify(res);
+//         this._currentUser = res.empInfo;
+//         this._token = res.token;
+//         console.log('user changed publish!');
+//         this.currentUserSubject.next(this._currentUser);
+//     }));  
+//   }
   // public checkUserPic(picUrl: string): Observable<any> {
   // return this.httpClient.get<any>(picUrl)
   // .do(m => { console.log('checkUserPic:', m); })

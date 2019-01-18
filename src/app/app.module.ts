@@ -35,6 +35,7 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import { LayoutRawComponent } from './components/layout-raw/layout-raw.component';
 import { GlobalService } from './services/global-service';
 import { FileDropModule } from 'ngx-file-drop';
+import { ToolDetailComponent } from './components/tool-detail/tool-detail.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { FileDropModule } from 'ngx-file-drop';
     MonitorSidebarComponent,
     // InitializeComponent,
     AvatarComponent,
-    LayoutRawComponent
+    LayoutRawComponent,
+    ToolDetailComponent
   ],
   imports: [
     BrowserModule,

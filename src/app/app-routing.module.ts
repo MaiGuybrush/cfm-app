@@ -12,10 +12,10 @@ const routes: Routes = [
   //   component: InitializeComponent, },
   { path: 'authenticate',
     component: AuthenticateComponent, },
-  { path: 'monitor/:fab', 
+  { path: 'monitor/:fab',
     canActivate: [AlwaysAuthGuard],
     component: MonitorPageComponent,  },
-  { path: 'monitor/:fab/:layout', 
+  { path: 'monitor/:fab/:layout',
     canActivate: [AlwaysAuthGuard],
     component: MonitorPageComponent,  },
   { path: 'monitor', component: MonitorPageComponent,
@@ -27,7 +27,7 @@ const routes: Routes = [
   { path: 'layout/:fab', component: LayoutPageComponent,
     canActivate: [AlwaysAuthGuard],
   },
-  { path: '', redirectTo: '/authenticate', pathMatch: 'full', 
+  { path: '', redirectTo: '/authenticate', pathMatch: 'full',
     canActivate: [AlwaysAuthGuard],
   }
 ];

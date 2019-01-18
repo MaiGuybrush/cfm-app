@@ -13,14 +13,14 @@ import { Shop } from '../models/shop';
   providedIn: 'root'
 })
 export class LocalConfigService {
-  public static readonly defaultFab = 'FAB3';
+//  public static readonly defaultFab = 'FAB3';
   readonly localConfigTag = 'LocalConfig';
   defaultConfig: LocalConfig = {
     currentFab: "",
     currentShop: "",
     currentLayout: "",
     refreshInterval: 1
-  }
+  };
   private _fabList: string[] = [];
   private _shopList: string[] = [];
   private _layoutList: string[] = [];
@@ -77,25 +77,23 @@ export class LocalConfigService {
   get layoutList(): string[] {
     return this._layoutList;
   }
-  
-  constructor(private serverConfig: ServerConfigService) { 
+
+  constructor(private serverConfig: ServerConfigService) {
   }
 
-  init(): Observable<boolean>
-  {
-    if (this._initialized)
-    {
+  init(): Observable<boolean> {
+    if (this._initialized) {
       return of(true);
     }
     return this.serverConfig.getShopMap().pipe(concatMap(shopMap => {
       this.shopMap = shopMap;
       return this.serverConfig.getFabList().pipe(concatMap(fabList => {
-        if (!fabList || fabList.length == 0) {
+        if (!fabList || fabList.length === 0) {
           this.initialized = true;
           return of(false);
-        }  
+        }
         this.fabList = fabList;
-        let localConfigStr = localStorage.getItem(this.localConfigTag);
+        const localConfigStr = localStorage.getItem(this.localConfigTag);
         if (localConfigStr) {
           this.config = JSON.parse(localConfigStr);
         } else {
@@ -103,13 +101,11 @@ export class LocalConfigService {
         }
         return of(true);
       }));
-    
-    }))
-
+    }));
   }
-  
+
   changeLayout(fab: string, shop: string, layout: string): Observable<boolean> {
-    let config = {
+    const config = {
       currentFab: fab,
       currentShop: shop,
       currentLayout: layout,
@@ -132,7 +128,7 @@ export class LocalConfigService {
   }
 
   public changeFab(fab: string): Observable<boolean> {
-    let config = JSON.parse(JSON.stringify(this.config));
+    const config = JSON.parse(JSON.stringify(this.config));
     if (config.currentFab !== fab) {
       config.currentFab = fab;
       return this.serverConfig.getShopList(fab).pipe(concatMap(shopList => {
@@ -143,7 +139,7 @@ export class LocalConfigService {
         return of(true);
       }));
 
-    } 
+    }
     return of(true);
   }
 
@@ -160,7 +156,7 @@ export class LocalConfigService {
   //       this._config.currentLayout = null;
   //       this._shopList = [];
   //       this._layoutList = [];
-  //     }  
+  //     }
   //     this.loadShopList(this.defaultFab).subscribe(m => {
   //       console.log(m);
   //     });
@@ -178,7 +174,7 @@ export class LocalConfigService {
   //       this._config.currentShop = this._shopList[0];
   //       this._config.currentLayout = null;
   //       this._layoutList = [];
-  //     }  
+  //     }
   //   }));
   // }
 
@@ -191,12 +187,12 @@ export class LocalConfigService {
   //     }
   //     if (m.indexOf(this._config.currentLayout) < 0) {
   //       this._config.currentLayout = this._layoutList[0];
-  //     }  
+  //     }
   //     this.config.next(this._config);
   //   }));
   // }
 
- 
+
   // changeFab(fab: string): Observable<boolean> {
   //   if (this._fabList.indexOf(fab) < 0) {
   //     return of(false);
@@ -221,5 +217,5 @@ export class LocalConfigService {
   //   }
   //   this.configObserver.next(this._config);
   // }
-  
+
 }

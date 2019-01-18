@@ -17,14 +17,16 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { Message } from 'primeng/api';
 import { MenuItem } from 'primeng/api';
 import { LocalConfigService } from '../../services/local-config.service';
+import { Output } from '@angular/core';
+import { EventEmitter } from '@angular/core';
 
-@Pipe({ name: 'safeHtml' })
-export class SafeHtmlPipe implements PipeTransform {
-  constructor(private sanitized: DomSanitizer) { }
-  transform(value) {
-    return this.sanitized.bypassSecurityTrustHtml(value);
-  }
-}
+// @Pipe({ name: 'safeHtml' })
+// export class SafeHtmlPipe implements PipeTransform {
+//   constructor(private sanitized: DomSanitizer) { }
+//   transform(value) {
+//     return this.sanitized.bypassSecurityTrustHtml(value);
+//   }
+// }
 
 // @Component({
 //   selector: "tool",
@@ -136,8 +138,8 @@ export class MonitorComponent implements OnInit, AfterViewInit, OnDestroy {
   portMap: any = {};
   @ViewChild('layoutContainer') layoutContainer: ElementRef;
   @ViewChild('op') toolInfoPanel: OverlayPanel;
+  @Output() toolClicked: EventEmitter<any> = new EventEmitter<any>();
 //  @ViewChild('localSvg') localSvg: ElementRef;
-  tools: any;
   toolInfoSet: svgjs.G[] = [];
   svg: SVGElement;
   filterNormalTool = false;
@@ -313,13 +315,14 @@ export class MonitorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  toolClicked(event: any) {
+  onToolClicked(event: any) {
     if (this.toolMap.get(event.srcElement.getAttribute('tool_id'))
       && this.toolMap.get(event.srcElement.getAttribute('tool_id')).toolData) {
       console.log('tool[' + event.srcElement.getAttribute('tool_id') + '] Clicked');
       const toolMapData = this.toolMap.get(event.srcElement.getAttribute('tool_id')).toolData;
       const toastMessage = `[${toolMapData.id}][${this.colorMap[+toolMapData.status].desc}][${toolMapData.comment}]`;
       const tool: svgjs.Element = adopt(event.srcElement);
+      this.toolClicked.emit(event);
       // let toast = this.toastCtrl.create({
       //   message: toastMessage,
       //   duration: 8000,
@@ -455,7 +458,6 @@ export class MonitorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.config.currentFab = cfg.currentFab;
     this.toolList = [];
     this.toolMap = new Map<string, ToolMapData>();
-    this.tools = [];
 
     this.layout.subscribe(m => {
       this.resetForLayoutChange();
@@ -482,7 +484,6 @@ export class MonitorComponent implements OnInit, AfterViewInit, OnDestroy {
       this.svgDoc = svgDoc;
       const ratioX = svgDoc.viewbox().width / svgClientRect.width;
       const ratioY = svgDoc.viewbox().height / svgClientRect.height;
-      this.tools = svgDoc.select('[tool_id]');
       const allNode = svgDoc.select('*');
       let svgViewBox: ViewBox;
       allNode.each((index, toolSet) => {
@@ -495,10 +496,10 @@ export class MonitorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (tool.attr('tool_id') && tool.attr('tool_id') !== 'null') {
           tool.click(($event) => {
-            this.toolClicked(event);
+            this.onToolClicked(event);
           });
           tool.on('contextmenu', ($event) => {
-            this.toolClicked(event);
+            this.onToolClicked(event);
           });
           tool.on('mouseleave', () => {
             this.msgs = [];

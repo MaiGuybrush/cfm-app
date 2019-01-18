@@ -15,11 +15,11 @@ import { LocalConfigService } from '../../services/local-config.service';
 export class AuthenticateComponent implements OnInit {
   @Input() certKey: string;
   err: string;
-  blocked: boolean = false;
+  blocked = false;
   constructor(private activatedRoute: ActivatedRoute, private router: Router, private httpClient: HttpClient,
     private userService: UserService, private localConfig: LocalConfigService) {
   }
- 
+
   ngOnInit() {
     // console.log("authenticate ngOnInit");
     // console.log(document.URL);
@@ -31,14 +31,14 @@ export class AuthenticateComponent implements OnInit {
     console.log('authenticate init');
     this.activatedRoute.params.subscribe(params => {
 
-      
-      let certKey = this.activatedRoute.snapshot.queryParams['CertificateKey'] ? 
+
+      const certKey = this.activatedRoute.snapshot.queryParams['CertificateKey'] ?
       decodeURIComponent(this.activatedRoute.snapshot.queryParams['CertificateKey']) : null;
-      let ssoTicket = this.userService.getSsoTicket();
-      let returnUrl = this.activatedRoute.snapshot.queryParams['url'] ? 
+      const ssoTicket = this.userService.getSsoTicket();
+      const returnUrl = this.activatedRoute.snapshot.queryParams['url'] ?
       decodeURIComponent(this.activatedRoute.snapshot.queryParams['url']) : null;
 
-      
+
       // if (this.userService.checkDomainName() === false && JSON.parse(localStorage.getItem('currentUser')) === null) {
       //   this.userService.logInforGuset();
       // }
@@ -50,30 +50,30 @@ export class AuthenticateComponent implements OnInit {
 
         // this.blocked = true;
         this.userService.logIn(certKey, ssoTicket).subscribe(
-          res => {
+            res => {
             this.localConfig.init().subscribe(m => {
               if (returnUrl) {
                 console.log('returnUrl:' + returnUrl);
-                let url = returnUrl;
+                const url = returnUrl;
                 this.router.navigateByUrl(url);
               } else {
                 this.router.navigate(['/monitor']);
-              }  
-            })
+              }
+            });
 //            localStorage["currentUser"] = JSON.stringify(res);
             // this.userService.setUser(res.ticketInfo);
-            //this.location.back();
+            // this.location.back();
             // this.blocked = false;
           },
           err => {
             console.log('login error:', err);
             this.userService.logOut();
-          })
+          });
 
 
-      }
-      else {
-        //         window.location.href = 'http://inlcnws.cminl.oa/InxSSO/Logon.aspx?url=' + encodeURI("http://c3c003469n.cminl.oa:4200/#/pages/authenticate");
+      } else {
+        // window.location.href = 'http://inlcnws.cminl.oa/InxSSO/Logon.aspx?url=' +
+        // encodeURI("http://c3c003469n.cminl.oa:4200/#/pages/authenticate");
         // localStorage.removeItem('currentUser');
         this.userService.redirectToSso();
         // Connection.redirectToSso();

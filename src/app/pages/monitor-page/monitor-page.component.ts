@@ -15,36 +15,48 @@ import { UserService } from '../../services/user.service';
 export class MonitorPageComponent implements OnInit, OnDestroy {
   currentConfig: LocalConfig;
   configSub: Subscription;
+  toolDetailSvg: string;
+  showDetail = false;
   constructor( private localConfig: LocalConfigService
     , private activatedRoute: ActivatedRoute, private serverConfig: ServerConfigService
-    , private userService: UserService, private route: Router ) { 
+    , private userService: UserService, private route: Router ) {
 
       console.log("page constructed");
     }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      let fab = params['fab'];
-      if (!fab && this.userService.currentUser.Shops.length > 0) {
-        this.route.navigate(['/monitor', this.localConfig.shopMap[this.userService.currentUser.Shops[0]].Fab]);
+      const fab = params['fab'];
+      if (!fab && this.userService.currentUser.Shops && this.userService.currentUser.Shops.length > 0) {
+        const command = ['/monitor'];
+        if (this.localConfig.config.currentFab) {
+          command.push(this.localConfig.config.currentFab);
+          if (this.localConfig.config.currentLayout) {
+            command.push(this.localConfig.config.currentLayout);
+          }
+
+        } else {
+          command.push(this.localConfig.shopMap[this.userService.currentUser.Shops[0]].Fab);
+        }
+        this.route.navigate(command);
         return;
       }
-      let shop = this.activatedRoute.snapshot.queryParamMap.get('shop');
-      let layout = params['layout'];
+      const shop = this.activatedRoute.snapshot.queryParamMap.get('shop');
+      const layout = params['layout'];
       // if (!fab || !shop || !layout) {
       //   console.log("invalid fab, shop, layout - " + fab + "," + shop + "," + layout);
       // }
       // if (!fab) {
 
       // }
-      
+
       this.localConfig.changeLayout(fab, shop, layout).subscribe(m => {
-      });;
-    });        
-    this.localConfig.configSubject.subscribe( m =>{
+      });
+    });
+    this.localConfig.configSubject.subscribe( m => {
       this.currentConfig = m;
     });
-    //this.currentConfig = this.localConfig.config;
+    // this.currentConfig = this.localConfig.config;
     // this.configSub = this.changeLayout(fab, shop, layout).subscribe(m => {
     //   if (!m) {
     //     console.log("change to params assigned layout fail!")
@@ -92,5 +104,10 @@ export class MonitorPageComponent implements OnInit, OnDestroy {
   //     }))
   //   }
   // }
- 
+  onToolClicked(event) {
+    console.log(event.srcElement.outerHTML);
+    this.toolDetailSvg = event.srcElement.outerHTML;
+    this.showDetail = true;
+
+  }
 }
