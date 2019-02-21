@@ -1,3 +1,5 @@
 
-<app-monitor *ngIf="!showDetail" [config]="currentConfig" (toolClicked)="onToolClicked($event)"></app-monitor>
+<app-monitor-sidebar></app-monitor-sidebar>
+<app-layout-svg *ngIf="!showDetail" (initialized)="onLayoutInitialized($event)" [colorMap]="colorMap" [portColorMap]="portColorMap" [modeColorMap]="modeColorMap"
+(toolClicked)="onToolClicked($event)" [layoutSvgRaw]="layoutRaw" [layoutModel]="layoutModel"></app-layout-svg>
 <app-tool-detail *ngIf="showDetail" [toolSvgRaw]="toolDetailSvg"></app-tool-detail>

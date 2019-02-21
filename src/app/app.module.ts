@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { LayoutComponent } from './layout/layout.component';
 import { HeaderComponent } from './header/header.component';
 import { AppRoutingModule } from './app-routing.module';
-import { MonitorComponent } from './components/monitor/monitor.component';
 import { ToolStatusService } from './services/tool-status.service';
 import { ServerConfigService } from './services/server-config.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -36,20 +35,21 @@ import { LayoutRawComponent } from './components/layout-raw/layout-raw.component
 import { GlobalService } from './services/global-service';
 import { FileDropModule } from 'ngx-file-drop';
 import { ToolDetailComponent } from './components/tool-detail/tool-detail.component';
+import { LayoutSvgComponent } from './components/layout-svg/layout-svg.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LayoutComponent,
     HeaderComponent,
-    MonitorComponent,
     MonitorPageComponent,
     LayoutPageComponent,
     MonitorSidebarComponent,
     // InitializeComponent,
     AvatarComponent,
     LayoutRawComponent,
-    ToolDetailComponent
+    ToolDetailComponent,
+    LayoutSvgComponent
   ],
   imports: [
     BrowserModule,

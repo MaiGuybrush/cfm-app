@@ -1,17 +1,7 @@
-<app-monitor-sidebar [model]="menuItems"></app-monitor-sidebar>
 <div>
-  <!-- <span>{{config.currentLayout}}</span>
-  <span>{{config.currentShop}}</span> -->
-  <div #layoutContainer class="layout-container">
-    <!-- <svg #localSvg>
-      </svg> -->
-    <!-- <svg width="100%" height="100%">       
-      <image [attr.xlink:href]="layout" width="100%" height="100%"/>    
-    </svg>       -->
+  <div #layoutContainer class="layout-raw-container">
+
   </div>
-  <!-- <div class="menu-button">
-    <p-button icon="fa fa-bars" (onClick)="onMenuClick($event)" [styleClass]="menu-button"></p-button>
-  </div> -->
   <div class="md-form search-control">
     <!-- <input mdbInputDirective #searchControl [mdbValidate]="false" [formControl]="searchControl" type="text" id="search-control" class="form-control" name="searchControl"/>
     <label for="search-control" class="">Search</label> -->
@@ -24,7 +14,3 @@
   </div>
   <p-growl [(value)]="msgs" styleClass="tool-info" [life]="8000" [sticky]="true" [style]="{position: 'fixed', bottom: '0px', top: 'unset'}"></p-growl>
 </div>
-<!-- <p-overlayPanel #op>
-    Content
-</p-overlayPanel> -->
-<!-- <p-messages [(value)]="msgs" [style]="{position: 'absolute', bottom: '0px'}"></p-messages> -->
