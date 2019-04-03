@@ -8,10 +8,10 @@ import { Api } from '../../services/api';
 import { LocalConfigService } from '../../services/local-config.service';
 import { LocalConfig } from '../../models/local-config';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
-import { UserService } from '../../services/user.service';
 import { LayoutRawComponent } from '../../components/layout-raw/layout-raw.component';
 import { Doc, Element, ViewBox, adopt, Rect } from 'svg.js';
 import { UploadEvent, UploadFile, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
+import { UserService } from 'inx-auth-jwt-lib';
 
 class BlockRect {
   bottom: number;

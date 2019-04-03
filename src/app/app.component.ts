@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ResolveStart } from '@angular/router';
 import { LocalConfigService } from './services/local-config.service';
-import { UserService } from './services/user.service';
+import { GlobalService } from './services/global.service';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +13,20 @@ export class AppComponent implements OnInit {
   loading = false;
   // public static certKey: string;
   constructor(private router: Router, private activatedRoute: ActivatedRoute,
-    private localConfig: LocalConfigService, private userService: UserService) {
-
+    private localConfig: LocalConfigService, private global: GlobalService) {
+      // const urlObj = user.parseURLByHash(document.location.href.toLowerCase());
+      // const segments = urlObj.pathname.split('/');
+      // const idx = segments.indexOf('cfm', 0);
+      // let shop = null;
+      // const regexp = new RegExp('^(((tft|cf|lcd)([1-8]|8b|l))|usl)$');
+      // if (idx >= 0 && segments.length > idx + 1) {
+      //   if (regexp.exec(segments[idx + 1]).length > 0) {
+      //     shop = segments[idx + 1];
+      //   }
+      // }
+      // if (shop) {
+      //   global.Shop = shop;
+      // }
   }
   ngOnInit() {
     // let url = this.userService.getUrlInfo();

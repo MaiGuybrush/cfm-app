@@ -1,0 +1,35 @@
+<!-- <button #launchButton type="button" mdbBtn color="default" rounded="true" data-toggle="modal" data-target="#basicExample"
+  (click)="frame.show()" mdbWavesEffect>Launch Modal</button> -->
+
+<div mdbModal #frame="mdbModal" class="modal fade left" id="frameModalTop" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">登入</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="frame.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <i class="fa fa-user prefix grey-text"></i>
+          <input type="email" id="defaultForm-id" [formControl]="loginFormModalID" class="form-control validate"
+            mdbInput>
+          <label data-error="wrong" data-success="right" for="defaultForm-id">請輸入公司NT帳號</label>
+        </div>
+
+        <div class="md-form mb-4">
+          <i class="fa fa-lock prefix grey-text"></i>
+          <input type="password" id="defaultForm-pass" [formControl]="loginFormModalPassword" class="form-control validate" (keydown)="onKeydown($event)"
+            mdbInput>
+          <label data-error="wrong" data-success="right" for="defaultForm-pass">請輸入密碼</label>
+        </div>
+      </div>
+      <mdb-error *ngIf="authFail">{{errorMessage}}</mdb-error>
+      <div class="modal-footer d-flex justify-content-center">
+        <button #loginBtn mdbBtn color="default" class="waves-light" mdbWavesEffect (click)="loginSummit()">Login</button>
+      </div>
+    </div>
+  </div>
+</div>

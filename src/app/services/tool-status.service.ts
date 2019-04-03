@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Api } from './api';
-import { GlobalService } from './global-service';
+import { GlobalService } from './global.service';
 import { ToolInfo } from './cfm-api-models';
 
 @Injectable({

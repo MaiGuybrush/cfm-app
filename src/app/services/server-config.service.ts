@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map, filter, scan } from 'rxjs/operators';
-import { Api } from './api';
+import { map } from 'rxjs/operators';
 import { Shop } from '../models/shop';
 import { LayoutInfo } from '../models/layout-info';
-import { GlobalService } from './global-service';
+import { GlobalService } from './global.service';
 
 /*
   Generated class for the ConfigProvider provider.

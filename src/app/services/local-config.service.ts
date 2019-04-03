@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LocalConfig } from '../models/local-config';
-import { Observable, of, from, BehaviorSubject, concat } from 'rxjs';
-import { ServerConfigService } from './server-config.service';
-import { concatMap, tap, map, first } from 'rxjs/operators';
-import { Local } from 'protractor/built/driverProviders';
-import { LocaleDataIndex } from '@angular/common/src/i18n/locale_data';
+import { Observable, of, BehaviorSubject } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
 import { Shop } from '../models/shop';
 
 
@@ -25,19 +22,19 @@ export class LocalConfigService {
   private _shopList: string[] = [];
   private _layoutList: string[] = [];
   private _config: LocalConfig = new LocalConfig();
-  private _initialized = false;
+  // private _initialized = false;
   shopMap: Map<string, Shop> = null;
 
   readonly fabSubject = new BehaviorSubject(this._config.currentFab);
-  readonly shopListSubject = new BehaviorSubject(this._shopList);
-  readonly layoutListSubject = new BehaviorSubject(this._layoutList);
+//  readonly shopListSubject = new BehaviorSubject(this._shopList);
+//  readonly layoutListSubject = new BehaviorSubject(this._layoutList);
   readonly configSubject = new BehaviorSubject(this._config);
-  readonly initializedSubject = new BehaviorSubject(this._initialized);
+//  readonly initializedSubject = new BehaviorSubject(this._initialized);
 
-  set initialized(val) {
-    this._initialized = val;
-    this.initializedSubject.next(val);
-  }
+  // set initialized(val) {
+  //   this._initialized = val;
+  //   this.initializedSubject.next(val);
+  // }
 
   get config(): LocalConfig {
     return this._config;
@@ -54,7 +51,7 @@ export class LocalConfigService {
 
   set shopList(value: string[]) {
     this._shopList = value;
-    this.shopListSubject.next(value);
+//    this.shopListSubject.next(value);
   }
 
   get shopList(): string[] {
@@ -71,40 +68,40 @@ export class LocalConfigService {
 
   set layoutList(value: string[]) {
     this._layoutList = value;
-    this.layoutListSubject.next(value);
+//    this.layoutListSubject.next(value);
   }
 
   get layoutList(): string[] {
     return this._layoutList;
   }
 
-  constructor(private serverConfig: ServerConfigService) {
+  constructor() {
   }
 
-  init(): Observable<boolean> {
-    if (this._initialized) {
-      return of(true);
-    }
-    return this.serverConfig.getShopMap().pipe(concatMap(shopMap => {
-      this.shopMap = shopMap;
-      return this.serverConfig.getFabList().pipe(concatMap(fabList => {
-        if (!fabList || fabList.length === 0) {
-          this.initialized = true;
-          return of(false);
-        }
-        this.fabList = fabList;
-        const localConfigStr = localStorage.getItem(this.localConfigTag);
-        if (localConfigStr) {
-          this.config = JSON.parse(localConfigStr);
-        } else {
-          this.config = this.defaultConfig;
-        }
-        return of(true);
-      }));
-    }));
-  }
+  // init(serverConfig: ServerConfigService): Observable<boolean> {
+  //   if (this._initialized) {
+  //     return of(true);
+  //   }
+  //   return serverConfig.getShopMap().pipe(concatMap(shopMap => {
+  //     this.shopMap = shopMap;
+  //     return serverConfig.getFabList().pipe(concatMap(fabList => {
+  //       if (!fabList || fabList.length === 0) {
+  //         this.initialized = true;
+  //         return of(false);
+  //       }
+  //       this.fabList = fabList;
+  //       const localConfigStr = localStorage.getItem(this.localConfigTag);
+  //       if (localConfigStr) {
+  //         this.config = JSON.parse(localConfigStr);
+  //       } else {
+  //         this.config = this.defaultConfig;
+  //       }
+  //       return of(true);
+  //     }));
+  //   }));
+  // }
 
-  changeLayout(fab: string, shop: string, layout: string): Observable<boolean> {
+  changeLayout(fab: string, shop: string, layout: string) {
     const config = {
       currentFab: fab,
       currentShop: shop,
@@ -114,34 +111,41 @@ export class LocalConfigService {
     if (this.fabList.indexOf(config.currentFab) < 0) {
       config.currentFab = this.fabList[0];
     }
-    return this.serverConfig.getShopList(config.currentFab).pipe(concatMap(shopList => {
-      this.shopList = shopList;
-      if (shopList.indexOf(config.currentShop) < 0) {
-        config.currentShop = shopList[0];
-      }
-      if (!config.currentLayout) {
-        config.currentLayout = config.currentShop;
-      }
-      this.config = config;
-      return of(true);
-    }));
-  }
-
-  public changeFab(fab: string): Observable<boolean> {
-    const config = JSON.parse(JSON.stringify(this.config));
-    if (config.currentFab !== fab) {
-      config.currentFab = fab;
-      return this.serverConfig.getShopList(fab).pipe(concatMap(shopList => {
-        this.shopList = shopList;
-        config.currentShop = shopList[0];
-        config.currentLayout = config.currentShop;
-        this.config = config;
-        return of(true);
-      }));
-
+    if (this.shopList.indexOf(config.currentShop) < 0) {
+      config.currentShop = this.shopList[0];
     }
-    return of(true);
+    if (!config.currentLayout) {
+      config.currentLayout = config.currentShop;
+    }
+    this.config = config;
+    // return this.serverConfig.getShopList(config.currentFab).pipe(concatMap(shopList => {
+    //   this.shopList = shopList;
+    //   if (shopList.indexOf(config.currentShop) < 0) {
+    //     config.currentShop = shopList[0];
+    //   }
+    //   if (!config.currentLayout) {
+    //     config.currentLayout = config.currentShop;
+    //   }
+    //   this.config = config;
+    //   return of(true);
+    // }));
   }
+
+  // public changeFab(fab: string): Observable<boolean> {
+  //   const config = JSON.parse(JSON.stringify(this.config));
+  //   if (config.currentFab !== fab) {
+  //     config.currentFab = fab;
+  //     return this.serverConfig.getShopList(fab).pipe(concatMap(shopList => {
+  //       this.shopList = shopList;
+  //       config.currentShop = shopList[0];
+  //       config.currentLayout = config.currentShop;
+  //       this.config = config;
+  //       return of(true);
+  //     }));
+
+  //   }
+  //   return of(true);
+  // }
 
   // private loadFabList(): Observable<string[]> {
   //   return this.serverConfig.getFabList().pipe(tap(m => {

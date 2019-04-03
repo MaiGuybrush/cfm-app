@@ -5,9 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of, Subscription, timer } from 'rxjs';
 import { ServerConfigService } from '../../services/server-config.service';
 import { concatMap } from 'rxjs/operators';
-import { UserService } from '../../services/user.service';
 import { ToolStyle, PortStyle } from '../../components/layout-svg/layout-svg.component';
 import { ToolStatusService } from '../../services/tool-status.service';
+import { UserService } from 'inx-auth-jwt-lib';
 
 @Component({
   selector: 'app-monitor-page',
@@ -27,6 +27,8 @@ export class MonitorPageComponent implements OnInit, OnDestroy {
   toolList: string[] = [];
   timer: Subscription;
   layoutRaw: string;
+  defaultShop = "TFT1";
+  defaultFab = "FAB1";
   convertToolIdForPortStatus: (toolId: string) => string;
 
   constructor( public statusProvider: ToolStatusService, private localConfig: LocalConfigService
@@ -111,10 +113,16 @@ export class MonitorPageComponent implements OnInit, OnDestroy {
         this.route.navigate(command);
         return;
       }
-      const shop = this.activatedRoute.snapshot.queryParamMap.get('shop');
-      const layout = params['layout'];
-      this.localConfig.changeLayout(fab, shop, layout).subscribe(m => {
-      });
+      let shop = this.activatedRoute.snapshot.queryParamMap.get('shop');
+      let layout = params['layout'];
+      if (!shop) {
+        shop = this.defaultShop;
+        layout = this.defaultShop;
+      }
+      if (!layout) {
+        layout = shop;
+      }
+      this.localConfig.changeLayout(fab, shop, layout);
     });
     this.localConfig.configSubject.subscribe( m => {
       const cfg = this.currentConfig = m;
@@ -172,9 +180,11 @@ export class MonitorPageComponent implements OnInit, OnDestroy {
   }
 
   onToolClicked(event) {
+    /* not released function
     console.log(event.srcElement.outerHTML);
     this.toolDetailSvg = event.srcElement.outerHTML;
     this.showDetail = true;
+    */
   }
 
   onLayoutInitialized(event: string[]) {

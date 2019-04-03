@@ -14,6 +14,7 @@ import { Router } from '../../../../node_modules/@angular/router';
 export class MonitorSidebarComponent implements OnInit {
   @Input() model: MenuItem[];
   loading: boolean;
+  visibleSideBar: boolean;
   constructor(private localConfig: LocalConfigService, private router: Router, private serverConfig: ServerConfigService) { }
 
   ngOnInit() {
@@ -25,10 +26,10 @@ export class MonitorSidebarComponent implements OnInit {
           this.model = layouts.map((value, index, array) => {
             return {
               label: value,
-              //command: this.handleMenuClicked
+              command: this.handleMenuClicked,
               routerLink: '/monitor/' + m + '/' + value,
               queryParams: {'shop': value.split('_')[0]}
-            }
+            };
           });
           this.loading = false;
         });

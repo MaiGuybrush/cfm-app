@@ -5,8 +5,8 @@ import { ServerConfigService } from '../services/server-config.service';
 import { Observable } from 'rxjs';
 import { map, concatMap } from 'rxjs/operators';
 import { SyncService } from '../services/sync.service';
-import { UserService } from '../services/user.service';
 import { LocalConfigService } from '../services/local-config.service';
+import { UserService } from 'inx-auth-jwt-lib';
 
 @Component({
   selector: 'app-header',

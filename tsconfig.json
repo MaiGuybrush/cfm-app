@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    "importHelpers": true,
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -14,7 +14,16 @@
     ],
     "lib": [
       "es2017",
-      "dom"
-    ]
-  }
+      "dom",
+      "dom.iterable"
+    ],
+    "module": "es2015",
+    "baseUrl": "./"
+  },"include": [
+    "src/**/*"
+  ],
+  "files": [
+    "src/app/app.module.ts",
+    // "node_modules/jqwidgets-scripts/jqwidgets-ts/angular_jqxbargauge.ts"
+  ]
 }

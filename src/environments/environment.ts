@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  mesApi: "http://10.53.56.79/ApiGateway/mesapi",
+  mesWeb: "http://10.53.56.79/ApiGateway/mes",
+  oaAuthBase: "http://10.53.56.79/ApiGateway/oaauthTest/auth"
 };
 
 /*
