@@ -1,0 +1,429 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  Brain, 
+  FileCode, 
+  GitBranch, 
+  CheckCircle2, 
+  AlertCircle, 
+  Cpu, 
+  ArrowRightLeft,
+  Layout,
+  Settings,
+  Target
+} from 'lucide-react';
+
+const slides = [
+  {
+    type: 'title',
+    title: '結構化 AI 協作開發框架深度評估',
+    subtitle: 'Gemini Conductor 與 Spec-Kit 之比較研究',
+    presenter: '[您的名字/職稱]',
+    date: '2025年 [月][日]',
+    icon: <Brain className="w-16 h-16 text-blue-500 mb-6" />
+  },
+  {
+    type: 'content',
+    title: '背景：AI 開發的典範轉移',
+    content: [
+      { 
+        label: '從「Vibe Coding」走向「工程化治理」',
+        isHeader: true 
+      },
+      {
+        label: '二十則訊息困境 (The 20-Message Problem)',
+        desc: '隨著對話變長，LLM 容易遺忘專案上下文。',
+        icon: <AlertCircle className="text-red-400" />
+      },
+      {
+        label: '缺乏持久性',
+        desc: '聊天視窗關閉後，架構決策與規範隨之消失。',
+        icon: <AlertCircle className="text-red-400" />
+      },
+      {
+        label: '核心目標',
+        desc: '將專案知識從暫時的對話視窗轉移至永久的 Markdown 文件與版本控制系統。',
+        icon: <CheckCircle2 className="text-green-400" />
+      }
+    ]
+  },
+  {
+    type: 'framework',
+    title: 'Gemini Conductor：上下文驅動開發 (CDD)',
+    philosophy: 'AI 是你的「資深學徒」 (The Apprentice)',
+    concept: '共享大腦 (Shared Brain)，全域記憶。',
+    files: [
+      { name: 'product.md', role: '產品經理', detail: '定義願景與非目標' },
+      { name: 'techstack.md', role: '技術長', detail: '定義技術選型與編碼規範' },
+      { name: 'tracks.md', role: '專案經理', detail: '記錄歷史任務，避免重複' }
+    ],
+    advantages: ['自我修復：掃描程式碼自動生成規範', '全域學習：一次教導，永久生效'],
+    color: 'blue'
+  },
+  {
+    type: 'framework',
+    title: 'Spec-Kit：規格驅動開發 (SDD)',
+    philosophy: '規格即真理 (Spec as Source of Truth)',
+    concept: '反轉權力結構，先寫規格，再寫程式。',
+    files: [
+      { name: 'constitution.md', role: '憲法', detail: '不可動搖的原則（安全性、覆蓋率）' },
+      { name: 'Pipeline', role: '流程', detail: 'Specify -> Plan -> Task -> Implement' },
+      { name: 'Isolation', role: '隔離', detail: '功能獨立 Specs 資料夾，互不干擾' }
+    ],
+    advantages: ['Clarify 流程：寫碼前釐清模糊需求', '可預測性：確保產出符合企業合規'],
+    color: 'emerald'
+  },
+  {
+    type: 'comparison',
+    title: '工作流體驗對比',
+    data: [
+      { trait: '互動風格', conductor: '流暢對話 (像 Slack)', speckt: '嚴謹填單 (像 ECO)' },
+      { trait: '啟動流程', conductor: 'Setup -> Tracks -> Plan', speckt: 'Constitution -> Specify -> Plan' },
+      { trait: '修改機制', conductor: 'Time Travel (一鍵撤銷變更)', speckt: 'Regenerate (修改規格後重產)' },
+      { trait: '上下文範圍', conductor: '全域 (跨任務共享)', speckt: '局部 (依賴分支隔離)' }
+    ]
+  },
+  {
+    type: 'metrics',
+    title: '關鍵技術指標分析',
+    metrics: [
+      {
+        label: '上下文管理',
+        conductor: '依賴 Gemini 1.5 Pro 2M 長視窗，全量載入。',
+        speckt: '透過檔案分割與模板化精簡資訊量。'
+      },
+      {
+        label: '模型生態系',
+        conductor: '深度綁定 Google Gemini (成本效益極高)。',
+        speckt: '模型中立，支援 Claude, OpenAI, Copilot。'
+      },
+      {
+        label: '專案類型',
+        conductor: '勝出於 既有專案 (Brownfield)。',
+        speckt: '勝出於 全新專案 (Greenfield)。'
+      }
+    ]
+  },
+  {
+    type: 'matrix',
+    title: '決策矩陣：該選哪一個？',
+    options: [
+      {
+        name: 'Gemini Conductor',
+        fit: ['維護舊專案', '快速迭代', '重構需求', '預算有限'],
+        painPoint: '「AI 總是忘記我用什麼框架」'
+      },
+      {
+        name: 'Spec-Kit',
+        fit: ['全新專案', '嚴謹工程', '合規導向', '預算充足'],
+        painPoint: '「需求一直變，程式碼改到爛掉」'
+      }
+    ]
+  },
+  {
+    type: 'summary',
+    title: '總結與展望',
+    items: [
+      { label: 'Gemini Conductor', text: '一位「記憶力超群的隊友」。適合追求效率、低成本的開發者。' },
+      { label: 'Spec-Kit', text: '一位「嚴格的系統架構師」。適合追求高品質與企業級需求的團隊。' },
+      { label: '未來趨勢', text: '底層具備全域記憶 (Conductor) + 上層具備規格驗證 (Spec-Kit) 的融合體。' }
+    ],
+    final: '建議根據專案屬性 (Greenfield vs. Brownfield) 進行選擇，而非二選一。'
+  }
+];
+
+export default function App() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev < slides.length - 1 ? prev + 1 : prev));
+  }, []);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : prev));
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [nextSlide, prevSlide]);
+
+  const renderSlide = () => {
+    const slide = slides[currentSlide];
+
+    switch (slide.type) {
+      case 'title':
+        return (
+          <div className="flex flex-col items-center justify-center h-full text-center px-8">
+            <div className="animate-bounce">{slide.icon}</div>
+            <h1 className="text-5xl font-bold text-slate-100 mb-4 tracking-tight leading-tight">
+              {slide.title}
+            </h1>
+            <div className="h-1 w-32 bg-blue-500 mb-6 rounded-full" />
+            <h2 className="text-2xl text-slate-400 mb-12 font-light">
+              {slide.subtitle}
+            </h2>
+            <div className="text-slate-500 space-y-1">
+              <p className="font-medium text-slate-300">{slide.presenter}</p>
+              <p className="text-sm">{slide.date}</p>
+            </div>
+          </div>
+        );
+
+      case 'content':
+        return (
+          <div className="p-12 h-full flex flex-col">
+            <h2 className="text-3xl font-bold text-slate-100 mb-8 border-l-4 border-blue-500 pl-4">
+              {slide.title}
+            </h2>
+            <div className="grid grid-cols-1 gap-6 flex-grow items-center max-w-4xl mx-auto">
+              {slide.content.map((item, i) => (
+                <div 
+                  key={i} 
+                  className={`${item.isHeader ? 'bg-slate-800/50 p-6 rounded-xl border border-slate-700' : 'flex items-start space-x-4 p-2'}`}
+                >
+                  {item.icon && <div className="mt-1">{item.icon}</div>}
+                  <div>
+                    <h3 className={`font-bold ${item.isHeader ? 'text-2xl text-blue-400 mb-2' : 'text-xl text-slate-200'}`}>
+                      {item.label}
+                    </h3>
+                    <p className="text-slate-400 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'framework':
+        const isBlue = slide.color === 'blue';
+        return (
+          <div className="p-12 h-full flex flex-col">
+            <div className="flex justify-between items-start mb-6">
+              <h2 className="text-3xl font-bold text-slate-100 border-l-4 border-blue-500 pl-4">
+                {slide.title}
+              </h2>
+              <span className={`px-4 py-1 rounded-full text-sm font-bold ${isBlue ? 'bg-blue-500/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                {slide.philosophy}
+              </span>
+            </div>
+            
+            <p className="text-xl text-slate-300 mb-8 bg-slate-800/30 p-4 rounded-lg italic">
+              「{slide.concept}」
+            </p>
+
+            <div className="grid grid-cols-3 gap-4 mb-8">
+              {slide.files.map((file, i) => (
+                <div key={i} className="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-slate-500 transition-colors">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <FileCode className={`w-5 h-5 ${isBlue ? 'text-blue-400' : 'text-emerald-400'}`} />
+                    <span className="font-mono text-slate-200">{file.name}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mb-1">{file.role}</p>
+                  <p className="text-sm text-slate-400">{file.detail}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-sm font-bold text-slate-500 uppercase tracking-widest">優勢：</h4>
+              <div className="grid grid-cols-2 gap-4">
+                {slide.advantages.map((adv, i) => (
+                  <div key={i} className="flex items-center space-x-3 bg-slate-800/40 p-3 rounded-lg">
+                    <CheckCircle2 className={`w-5 h-5 ${isBlue ? 'text-blue-400' : 'text-emerald-400'}`} />
+                    <span className="text-slate-300">{adv}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'comparison':
+        return (
+          <div className="p-12 h-full flex flex-col">
+            <h2 className="text-3xl font-bold text-slate-100 mb-10 border-l-4 border-blue-500 pl-4">
+              {slide.title}
+            </h2>
+            <div className="overflow-hidden rounded-xl border border-slate-700">
+              <table className="w-full text-left">
+                <thead className="bg-slate-800 text-slate-400 text-sm uppercase">
+                  <tr>
+                    <th className="px-6 py-4">特性指標</th>
+                    <th className="px-6 py-4 text-blue-400">Gemini Conductor</th>
+                    <th className="px-6 py-4 text-emerald-400">Spec-Kit</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-700">
+                  {slide.data.map((row, i) => (
+                    <tr key={i} className="hover:bg-slate-800/30 transition-colors">
+                      <td className="px-6 py-4 font-bold text-slate-400">{row.trait}</td>
+                      <td className="px-6 py-4 text-slate-200">{row.conductor}</td>
+                      <td className="px-6 py-4 text-slate-200">{row.speckt}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+
+      case 'metrics':
+        return (
+          <div className="p-12 h-full flex flex-col">
+            <h2 className="text-3xl font-bold text-slate-100 mb-8 border-l-4 border-blue-500 pl-4">
+              {slide.title}
+            </h2>
+            <div className="grid grid-cols-1 gap-6">
+              {slide.metrics.map((m, i) => (
+                <div key={i} className="bg-slate-800/40 p-6 rounded-2xl border border-slate-700 relative overflow-hidden group">
+                  <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0">
+                    <div className="md:w-1/4">
+                      <h3 className="text-xl font-bold text-blue-400">{m.label}</h3>
+                    </div>
+                    <div className="md:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-blue-500/5 p-3 rounded-lg border border-blue-500/20">
+                        <span className="text-xs text-blue-500 font-bold block mb-1">CONDUCTOR</span>
+                        <p className="text-sm text-slate-300">{m.conductor}</p>
+                      </div>
+                      <div className="bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/20">
+                        <span className="text-xs text-emerald-500 font-bold block mb-1">SPEC-KIT</span>
+                        <p className="text-sm text-slate-300">{m.speckt}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'matrix':
+        return (
+          <div className="p-12 h-full flex flex-col">
+            <h2 className="text-3xl font-bold text-slate-100 mb-10 border-l-4 border-blue-500 pl-4">
+              {slide.title}
+            </h2>
+            <div className="grid grid-cols-2 gap-8 flex-grow">
+              {slide.options.map((opt, i) => (
+                <div key={i} className={`p-8 rounded-3xl border-2 ${i === 0 ? 'border-blue-500/30 bg-blue-500/5' : 'border-emerald-500/30 bg-emerald-500/5'} flex flex-col`}>
+                  <h3 className={`text-3xl font-black mb-6 ${i === 0 ? 'text-blue-400' : 'text-emerald-400'}`}>
+                    {opt.name}
+                  </h3>
+                  <div className="space-y-4 mb-8 flex-grow">
+                    <p className="text-slate-400 text-sm font-bold uppercase tracking-wider">最佳適用：</p>
+                    <ul className="space-y-3">
+                      {opt.fit.map((item, idx) => (
+                        <li key={idx} className="flex items-center space-x-3 text-slate-200">
+                          <CheckCircle2 className={`w-5 h-5 ${i === 0 ? 'text-blue-400' : 'text-emerald-400'}`} />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className={`p-4 rounded-xl ${i === 0 ? 'bg-blue-500/10' : 'bg-emerald-500/10'} italic text-slate-300 border-l-4 ${i === 0 ? 'border-blue-400' : 'border-emerald-400'}`}>
+                    解決：{opt.painPoint}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'summary':
+        return (
+          <div className="p-12 h-full flex flex-col">
+            <h2 className="text-3xl font-bold text-slate-100 mb-8 border-l-4 border-blue-500 pl-4">
+              {slide.title}
+            </h2>
+            <div className="space-y-6 mb-12">
+              {slide.items.map((item, i) => (
+                <div key={i} className="flex items-start space-x-4 bg-slate-800/30 p-4 rounded-xl border border-slate-700">
+                  <div className="bg-blue-500/20 p-2 rounded-lg">
+                    {i === 2 ? <ArrowRightLeft className="text-blue-400" /> : <Target className="text-blue-400" />}
+                  </div>
+                  <div>
+                    <span className="font-bold text-slate-200 block text-lg">{item.label}</span>
+                    <p className="text-slate-400">{item.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-auto bg-gradient-to-r from-blue-600 to-indigo-600 p-8 rounded-2xl text-center shadow-2xl shadow-blue-500/20">
+              <p className="text-2xl font-bold text-white mb-2 underline decoration-blue-300 underline-offset-4">核心建議</p>
+              <p className="text-blue-100 text-xl">{slide.final}</p>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-slate-200 flex items-center justify-center font-sans overflow-hidden">
+      {/* Background decoration */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none opacity-20">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-600 blur-[120px] rounded-full" />
+      </div>
+
+      <div className="relative w-full max-w-6xl aspect-video bg-slate-900 shadow-2xl rounded-3xl overflow-hidden border border-slate-800 flex flex-col">
+        {/* Progress bar */}
+        <div className="h-1.5 w-full bg-slate-800">
+          <div 
+            className="h-full bg-blue-500 transition-all duration-300"
+            style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
+          />
+        </div>
+
+        {/* Content area */}
+        <div className="flex-grow overflow-y-auto">
+          {renderSlide()}
+        </div>
+
+        {/* Navigation Bar */}
+        <div className="h-16 px-6 border-t border-slate-800 flex items-center justify-between bg-slate-900/50 backdrop-blur-md">
+          <div className="flex items-center space-x-4">
+            <span className="text-xs font-mono text-slate-500 bg-slate-800 px-2 py-1 rounded">
+              {currentSlide + 1} / {slides.length}
+            </span>
+            <span className="text-xs text-slate-600 hidden md:inline-block">
+              使用鍵盤方向鍵或點擊導航
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={prevSlide}
+              disabled={currentSlide === 0}
+              className="p-2 rounded-lg hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button 
+              onClick={nextSlide}
+              disabled={currentSlide === slides.length - 1}
+              className="p-2 rounded-lg hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Mobile Controls Overlay */}
+      <div className="md:hidden fixed bottom-4 right-4 flex space-x-2">
+         <button onClick={prevSlide} className="bg-blue-600 p-4 rounded-full shadow-lg"><ChevronLeft /></button>
+         <button onClick={nextSlide} className="bg-blue-600 p-4 rounded-full shadow-lg"><ChevronRight /></button>
+      </div>
+    </div>
+  );
+}
+

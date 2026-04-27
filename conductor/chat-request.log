@@ -1,0 +1,121 @@
+2026-01-12T02:25:56.567Z — /conductor:setup
+2026-01-12T02:28:55.367Z — yes
+2026-01-12T02:36:59.885Z — C
+2026-01-12T02:37:35.756Z — A
+2026-01-12T02:38:44.493Z — A,B,C
+2026-01-12T02:39:50.378Z — B, 此專案範圍僅包含前端部分，根目錄是一個前端應用的專案
+2026-01-12T02:40:57.933Z — B, 登入採SSO, 未認證將導向SSO 網站，本專案不實作登入畫面
+2026-01-12T02:48:33.836Z — A
+2026-01-12T03:42:58.969Z — A,C
+2026-01-12T03:53:44.016Z — A
+2026-01-12T05:14:22.848Z — A,B,C
+2026-01-12T05:14:42.253Z — A
+2026-01-12T05:15:16.729Z — Yes
+2026-01-12T05:20:57.996Z — A
+2026-01-12T05:43:09.558Z — A
+2026-01-12T05:46:29.960Z — A
+2026-01-12T06:01:12.569Z — A
+2026-01-12T06:13:30.838Z — track app_shell_20260112 增加以下參考: 1. 新增SSO文件, docs\sso 目錄下有sso 參考文件及程式碼。2.新增後端API文件 docs\api\ums-api\contracts 目錄下為後端API 規格，請參考並分析有無缺失
+2026-01-12T06:41:17.556Z — adAuth contract 請參考docs\api\adAuth-api\contracts\api-swagger.yaml, 部分回應格式請參考authentication.md, 可以的話，幫忙修改api-swagger.yaml 的回應格式缺失部分，包含adAuth/SsoUrl, adAuth/RefreshToken, adAuth/VerifyCert
+2026-01-12T06:44:58.908Z — /conductor:implement
+2026-01-12T07:22:02.786Z — y
+2026-01-12T07:39:26.000Z — /conductor:implement
+2026-01-12T07:41:55.747Z — /QUIT
+2026-01-12T07:41:57.594Z — /quit
+2026-01-12T07:42:41.751Z — /stats
+2026-01-12T07:42:51.865Z — /conductor:status
+2026-01-12T08:53:50.743Z — /conductor:implement
+2026-01-12T15:13:44.625Z — yes
+2026-01-12T15:39:50.992Z — AuthService實作參考@authentication.md, adauth api baseUrl使用http://tncimweb1.cminl.oa/uacapi
+2026-01-12T15:43:05.211Z — redirect to sso login 時，必須加參數url=<current location>
+2026-01-12T15:45:21.652Z — @docs/sso/authentication.md 的case 2 並沒有實作或生效
+2026-01-12T15:53:40.236Z — verifyCert 後應去除CertificateKey參數，redirect 到SSO Login 前也應去除CertificateKey 及舊的url參數後，再重設url參數並redirect
+2026-01-12T16:36:23.687Z — 幫我rollback phase 2, 我想重新實作，先幫我rollback 即可
+2026-01-12T17:00:01.638Z — authentication.md 有進行調整，請重新規劃phase 2
+2026-01-13T00:06:41.429Z — /conductor:implement
+2026-01-13T00:07:45.495Z — /model
+2026-01-13T00:07:50.664Z — /auth
+2026-01-13T00:08:01.333Z — /auth
+2026-01-13T00:11:13.945Z — /auth
+2026-01-13T00:11:25.072Z — /conductor:implement
+2026-01-13T02:43:42.567Z — /conductor:implement
+2026-01-13T02:57:07.493Z — /quit
+2026-01-13T03:48:12.714Z — yes
+2026-01-13T05:21:26.352Z — 沒看到側邊欄, 內容如下<app-root ng-version="21.0.8" ...> (大量 HTML/DOM 輸出)
+2026-01-13T05:32:25.680Z — yes
+2026-01-13T05:39:36.531Z — yes
+2026-01-13T05:41:46.835Z — A
+2026-01-13T05:43:40.181Z — all tracks complete?
+2026-01-13T06:10:23.435Z — /conductor:newTrack 參考@requrement.md, 完成使用者專案管理功能，使用者一開始必須選擇專案，若沒有專案則建立專案, ums api 規格請參考docs/api/ums-api/contracts目錄下的檔案
+2026-01-13T06:11:18.182Z — A
+2026-01-13T06:12:08.622Z — all
+2026-01-13T06:14:10.564Z — B
+2026-01-13T06:16:42.478Z — C, header
+2026-01-13T06:18:04.619Z — A
+2026-01-13T06:34:02.941Z — A
+2026-01-13T06:37:03.232Z — 檢查後端API 是否符合此specification
+2026-01-13T06:41:31.744Z — yes
+2026-01-13T06:42:11.338Z — /auth
+2026-01-13T06:43:05.320Z — /conductor:status
+2026-01-13T06:45:05.483Z — /quit
+2026-01-13T06:47:49.544Z — /conductor:implement
+2026-01-13T07:11:18.545Z — 目前後端API 程式同時在開發中，無法整合測試，有何建議?
+2026-01-13T07:43:32.401Z — C
+2026-01-13T07:43:47.490Z — /conductor:status
+2026-01-13T07:52:32.985Z — I check manually, header 未顯示目前project, 也沒有要求我選擇project
+2026-01-13T08:09:06.900Z — project selector dropdown list 會被sidebar 蓋住
+2026-01-13T08:11:19.117Z — fixed
+2026-01-13T08:33:08.962Z — 我想測試使用者無任何project 的情境
+2026-01-13T08:34:38.166Z — 彈出視窗，我按create 按鈕後，header 有出現project，但對話框未消失
+2026-01-13T08:43:49.919Z — /auth
+2026-01-13T08:44:16.634Z — 繼續剛才未完成工作
+2026-01-13T08:44:35.476Z — hi
+2026-01-13T08:44:40.312Z — /auth
+2026-01-13T08:45:01.476Z — /quit
+2026-01-13T08:45:40.647Z — /auth
+2026-01-13T08:45:45.724Z — hi
+2026-01-13T08:46:00.657Z — 繼續剛才未完成工作
+2026-01-13T08:53:10.033Z — 有兩個問題1. create new project對話框無法cancel 關閉。2. 建立新project 時，按下create 後，對話框關閉完，會立即再開啟create project 的對話框
+2026-01-13T08:59:40.167Z — yes, 再幫我改為data: MOCK_PROJECTS.以利後續測試
+2026-01-13T09:03:51.104Z — yes
+2026-01-13T14:26:05.991Z — /conductor:status
+2026-01-13T14:31:25.397Z — /auth
+2026-01-13T14:31:48.050Z — /stats
+2026-01-13T14:34:23.150Z — /conductor:newTrack 參考@requirement.md, 完成"FR-3. 使用者 / 團隊管理"功能，後端API請參考docs\api\ums-api目錄下的規格，計畫時檢查後端API支否已完整支援前端功能開發
+2026-01-13T14:36:06.153Z — B,C,D,E
+2026-01-13T14:38:04.246Z — A,B,C,D. UI 元件可視需要使用angular material 及ag-grid，如有需要，可新增至tech-stack.md
+2026-01-13T14:39:42.616Z — B
+2026-01-13T14:46:31.893Z — A
+2026-01-13T14:52:49.421Z — A
+2026-01-13T14:55:50.739Z — yes
+2026-01-13T14:56:21.640Z — yes
+2026-01-13T14:58:01.532Z — /conductor:implement
+2026-01-13T15:21:27.804Z — /auth
+2026-01-13T15:21:34.914Z — /conductor:implement
+2026-01-13T15:22:16.648Z — /quit
+2026-01-13T15:22:47.796Z — /auth
+2026-01-13T15:22:56.755Z — /conductor:implement
+2026-01-13T15:25:26.067Z — /conductor:implement team_management_20260113
+2026-01-13T15:33:31.917Z — yes
+2026-01-13T15:45:34.557Z — ok, continue next phase
+2026-01-14T00:17:31.913Z — /auth
+2026-01-14T00:17:52.166Z — /stats
+2026-01-14T00:18:23.201Z — /conductor:implement
+2026-01-14T00:18:50.661Z — /auth
+2026-01-14T00:18:58.256Z — /conductor:implement
+2026-01-14T01:03:01.825Z — ok, go next
+2026-01-14T01:30:11.185Z — Manual Verification Plan 可以使用playwright 測試看看嗎？
+2026-01-14T01:44:24.536Z — yes
+2026-01-14T02:16:18.630Z — archive
+2026-01-14T02:19:06.664Z — 請檢視目前docs/api/ums-api 目錄下的規格，分析project, user, team 間的關係為何？
+2026-01-14T05:09:01.252Z — /quit
+2026-01-14T05:09:31.933Z — /stats
+2026-01-14T05:09:56.560Z — /auth
+2026-01-14T08:48:38.363Z — /auth
+2026-01-14T08:49:30.743Z — powershell 如何設定環境變數
+2026-01-15T00:04:51.160Z — /quit
+2026-01-15T00:16:20.062Z — /model
+2026-01-15T00:16:44.545Z — /settings
+2026-01-15T00:17:17.165Z — /settings
+2026-01-15T00:17:20.887Z — /model
+2026-01-15T00:17:35.668Z — /auth
