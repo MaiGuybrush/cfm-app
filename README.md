@@ -2,7 +2,7 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.3.
 
-https://account.brave.com?code=6f2e8d94-a9a3-42e6-b90d-64599b91e5f9&requestId=e0d0afb2-0b50-4be2-8d4c-eb91f47dbb15
+https://account.brave.com?code=03adc9c9-2883-4c9c-b60e-950c29cff210&requestId=c0889a56-0798-4b3c-a048-8599428c021f
 
 ## Development server
 
