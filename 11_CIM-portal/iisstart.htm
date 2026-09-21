@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <title>CIM Web 系統入口</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --sidebar-w: 180px;
+            --header-h: 54px;
+            --bg: #f5f5f7;
+            --card-bg: #fff;
+            --text: #1d1d1f;
+            --text-2: #6e6e73;
+            --border: #d2d2d7;
+            --radius: 10px;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --accent: #0071e3;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                "Helvetica Neue", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        /* Header */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--header-h);
+            background: rgba(255,255,255,0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center;
+            padding: 0 20px; gap: 14px; z-index: 100;
+        }
+        .logo { font-size: 17px; font-weight: 700; color: var(--text); flex-shrink: 0; }
+        .logo span { color: var(--accent); }
+        .search-wrap { flex: 1; max-width: 360px; position: relative; }
+        .search-wrap input {
+            width: 100%; padding: 7px 14px 7px 34px;
+            border: 1px solid var(--border); border-radius: 18px;
+            background: var(--bg); font-size: 13px; color: var(--text);
+            outline: none; transition: border-color .2s, background .2s;
+        }
+        .search-wrap input:focus { border-color: var(--accent); background: #fff; }
+        .search-icon {
+            position: absolute; left: 11px; top: 50%;
+            transform: translateY(-50%); color: var(--text-2); pointer-events: none;
+        }
+        /* Layout */
+        .layout { display: flex; margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); }
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-w); position: fixed;
+            top: var(--header-h); bottom: 0;
+            overflow-y: auto; padding: 16px 10px;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border); z-index: 50;
+        }
+        .sidebar-label {
+            font-size: 12px; font-weight: 600; color: var(--text-2);
+            text-transform: uppercase; letter-spacing: .08em;
+            padding: 4px 10px 8px;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 10px; border-radius: 7px;
+            cursor: pointer; text-decoration: none;
+            color: var(--text-2); font-size: 15px; font-weight: 500;
+            margin-bottom: 1px; transition: background .15s, color .15s;
+        }
+        .nav-item:hover { background: rgba(0,0,0,0.05); color: var(--text); }
+        .nav-item.active { background: var(--accent); color: #fff; }
+        .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        /* Main */
+        .main { margin-left: var(--sidebar-w); flex: 1; padding: 24px 24px 48px; }
+        /* Section */
+        .section { margin-bottom: 36px; scroll-margin-top: calc(var(--header-h) + 12px); }
+        .sec-header {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 14px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sec-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+        .sec-title { font-size: 17px; font-weight: 600; }
+        .sec-count {
+            font-size: 13px; color: var(--text-2);
+            background: var(--border); padding: 2px 7px; border-radius: 9px;
+        }
+        /* Cards */
+        .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(186px, 1fr)); gap: 12px; }
+        .card {
+            background: var(--card-bg); border-radius: var(--radius);
+            padding: 14px; box-shadow: var(--shadow);
+            transition: transform .18s, box-shadow .18s, border-color .18s;
+            display: flex; flex-direction: column; gap: 10px;
+            border: 1px solid transparent;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.11); border-color: var(--accent); }
+        .card-top { display: flex; align-items: center; gap: 10px; }
+        .card-icon {
+            width: 38px; height: 38px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; overflow: hidden; background: var(--bg);
+        }
+        .card-icon img { width: 100%; height: 100%; object-fit: contain; }
+        .card-icon-letter {
+            width: 38px; height: 38px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .card-name { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.35; }
+        .card-link { text-decoration: none; flex: 1; }
+        .card-link:hover .card-name { color: var(--accent); }
+        .card-name-nourl { color: var(--text-2); font-weight: 600; font-size: 15px; line-height: 1.35; }
+        .card-docs {
+            display: flex; flex-wrap: wrap; gap: 4px;
+            padding-top: 8px; border-top: 1px solid var(--border);
+        }
+        .doc-link {
+            font-size: 13px; color: var(--accent); text-decoration: none;
+            background: rgba(0,113,227,0.08); padding: 2px 7px;
+            border-radius: 4px; white-space: nowrap; transition: background .15s;
+        }
+        .doc-link:hover { background: rgba(0,113,227,0.16); }
+        /* Hidden for search */
+        .card.hidden { display: none; }
+        .section.hidden { display: none; }
+        .no-results { display: none; padding: 40px; text-align: center; color: var(--text-2); font-size: 14px; }
+        .no-results.show { display: block; }
+    </style>
+    <script>
+        /* ── category & system data ── */
+        var CATEGORIES = [
+          { id:'process', name:'製造與製程', color:'#00897B', systems:[
+              { name:'CFM', url:'http://tncimweb.cminl.oa/cfm', icon:'http://tncimweb.cminl.oa/cfm/favicon.ico', docs:[] },
+              { name:'R2R Web OPI', url:'http://tncimweb.cminl.oa/r2r/#/home', icon:'http://tncimweb.cminl.oa/r2r/favicon.ico', docs:[] },
+              { name:'iFDC', url:'http://tncimweb.cminl.oa/FDC', icon:'http://tncimweb.cminl.oa/FDC/favicon.ico', docs:[{t:'操作手冊',u:'http://tncimweb.cminl.oa/usermanual/fdc/'}] },
+              { name:'ENG (EDCX,EMS,EQBK)', url:'http://tncimweb.cminl.oa/eng/#/edc', icon:'http://tncimweb.cminl.oa/eng/favicon.ico', docs:[{t:'使用者手冊',u:'http://tncimweb.cminl.oa/plp-eng/user-manual/'}] },
+              { name:'MFG (iSS,智慧排程)', url:'http://tncimweb.cminl.oa/mfg/#/iss', icon:'http://tncimweb.cminl.oa/mfg/favicon.ico', docs:[] },
+              { name:'autoML', url:'http://tncimweb.cminl.oa/auto-ml', icon:null, docs:[] },
+              { name:'Opi Kit', url:'http://tncimweb.cminl.oa/opi-kit/', icon:'http://tncimweb.cminl.oa/opi-kit/assets/images/logo.svg', docs:[{t:'使用手冊',u:'http://tncimweb.cminl.oa/opi-kit/user-manual'}] },
+              { name:'PLP CFM', url:'http://tncimweb.cminl.oa/plp-cfm', icon:'http://tncimweb.cminl.oa/plp-cfm/favicon.ico', docs:[] },
+              { name:'PLP ENG (EDCX)', url:'http://tncimweb.cminl.oa/plp-eng/#/edc', icon:'http://tncimweb.cminl.oa/plp-eng/favicon.ico', docs:[{t:'使用者手冊',u:'http://tncimweb.cminl.oa/plp-eng/user-manual/'}] },
+              { name:'UAC', url:'http://tncimweb.cminl.oa/uac', icon:'http://tncimweb.cminl.oa/uac/favicon.ico', docs:[{t:'使用者手冊',u:'http://tncimweb.cminl.oa/uac/user-manual/'}] },
+          ]},
+          { id:'quality', name:'品質與分析', color:'#4CAF50', systems:[
+              { name:'RTQCS', url:'http://tncimweb.cminl.oa/rtqcs/tft3', icon:'http://tncimweb.cminl.oa/rtqcs/tft3/RTQCS.ico', docs:[] },
+              { name:'INXADJ', url:'http://tncimweb.cminl.oa/inxadj', icon:'http://tncimweb.cminl.oa/inxadj/inxadj.ico', docs:[] },
+              { name:'AIADJ', url:'http://tncimweb.cminl.oa/aiadj', icon:'http://tncimweb.cminl.oa/aiadj/favicon.ico', docs:[{t:'使用者手冊',u:'http://tncimweb.cminl.oa/usermanual/aiadj/'}] },
+              { name:'INXADM', url:'http://tncimweb.cminl.oa/inxadm', icon:'http://tncimweb.cminl.oa/inxadm/inxadm.ico', docs:[] },
+              { name:'SPC 異常排除', url:'http://tncimweb.cminl.oa/SpcAssistant/zh-tw/tft3/Troubleshooting', icon:null, docs:[] },
+              { name:'Defect Library', url:'http://tncimweb.cminl.oa/insp', icon:'http://tncimweb.cminl.oa/insp/favicon.ico', docs:[{t:'使用手冊',u:'http://tncimweb.cminl.oa/insp/user-manual/'}] }
+          ]},
+          { id:'equipment', name:'異常與監控', color:'#FF9800', systems:[
+              { name:'機況推播系統', url:'http://tncimweb.cminl.oa/EQStatusPush', icon:'http://tncimweb.cminl.oa/EQStatusPush/favicon.ico', docs:[{t:'使用手冊',u:'http://tncimweb.cminl.oa/EQStatusPush/user-manual/'}] },
+              { name:'UMD', url:'http://ptnecimumd.cminl.oa', icon:'http://ptnecimumd.cminl.oa/images/alarm.png', docs:[{t:'使用手冊',u:'http://ptnecimumd.cminl.oa/user-manual/'},{t:'系統說明',u:'http://tncimweb.cminl.oa/UserManual/UmdSysIntro/'}] },
+              { name:'CF RIIC', url:'http://priic.cminl.oa', icon:'http://priic.cminl.oa/favicon.ico', docs:[] }
+          ]},
+          { id:'ai', name:'AI 平台', color:'#3F51B5', systems:[
+              { name:'UMS', url:'http://tncimweb1.cminl.oa/ums', icon:'http://tncimweb1.cminl.oa/ums/favicon.ico', docs:[{t:'使用手冊',u:'http://tncimweb1.cminl.oa/ums/user-manual'}] }
+          ]},
+          { id:'others', name:'CIM 工具', color:'#607D8B', systems:[
+              { name:'App Manager', url:'http://tncimweb.cminl.oa/AppManagement', icon:'http://tncimweb.cminl.oa/AppManagement/favicon.ico', docs:[] },
+              { name:'值班工具', url:'http://tncimweb.cminl.oa/helpdesk', icon:'http://tncimweb.cminl.oa/helpdesk/favicon.ico', docs:[{t:'使用手冊',u:'http://tncimweb.cminl.oa/helpdesk/user-manual/'}] },
+              { name:'Cloud Drive', url:'http://tncimweb.cminl.oa/CloudDrive', icon:null, docs:[] },
+              { name:'Git Server', url:'http://tncimweb.cminl.oa/git-server', icon:'http://tncimweb.cminl.oa/git-server/assets/img/logo.svg' },
+              { name:'App Repository', url:'http://tncimweb1.cminl.oa:8080/files', icon:'http://tncimweb1.cminl.oa:8080/static/img/logo.svg', docs:[] },
+              { name:'備品管理系統', url:'http://tncimweb.cminl.oa/Spms', icon:'http://tncimweb.cminl.oa/Spms/favicon.ico', docs:[{t:'使用手冊',u:'http://tncimweb.cminl.oa/Spms/user-manual/'}] },
+              { name:'使用率報表', url:'http://tncimweb.cminl.oa/AnalysisReport', icon:'http://tncimweb.cminl.oa/AnalysisReport/favicon.ico', docs:[] },
+              { name:'內部檔案分享服務', url:'http://10.53.216.112:31777', icon:'http://10.53.216.112:31777/public/static/favicon.svg', docs:[{t:'使用說明',u:'http://10.53.216.112/docs/'}] }
+          ]}
+        ];
+
+        function letter(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
+
+        function buildIcon(sys, catColor) {
+            var iconUrl = sys.icon;
+            if (!iconUrl && sys.relIcon) iconUrl = location.origin + '/' + sys.relIcon;
+            if (iconUrl) {
+                return '<div class="card-icon"><img src="' + iconUrl + '" alt="" onerror="this.parentNode.outerHTML=\'<div class=card-icon-letter style=background:' + catColor + '>' + letter(sys.name) + '</div>\'"></div>';
+            }
+            return '<div class="card-icon-letter" style="background:' + catColor + '">' + letter(sys.name) + '</div>';
+        }
+
+        function buildCard(sys, catColor) {
+            var url = sys.url || (sys.relUrl ? (location.origin + '/' + sys.relUrl) : '');
+            var topHtml = '<div class="card-top">' + buildIcon(sys, catColor);
+            var nameHtml = '<div class="card-name">' + sys.name + '</div>';
+            if (url) {
+                topHtml += '<a class="card-link" href="' + url + '" target="_blank">' + nameHtml + '</a>';
+            } else {
+                topHtml += '<div class="card-name-nourl">' + sys.name + '</div>';
+            }
+            topHtml += '</div>';
+            var docsHtml = '';
+            if (sys.docs && sys.docs.length) {
+                var links = sys.docs.map(function(d) {
+                    return '<a class="doc-link" href="' + d.u + '" target="_blank">' + d.t + '</a>';
+                }).join('');
+                docsHtml = '<div class="card-docs">' + links + '</div>';
+            }
+            var searchData = sys.name.toLowerCase();
+            return '<div class="card" data-search="' + searchData + '">' + topHtml + docsHtml + '</div>';
+        }
+
+        window.onload = function() {
+            var sidebar = document.getElementById('sidebar');
+            var main = document.getElementById('main');
+
+            CATEGORIES.forEach(function(cat) {
+                /* sidebar nav item */
+                var a = document.createElement('a');
+                a.className = 'nav-item';
+                a.href = '#' + cat.id;
+                a.innerHTML = '<span class="nav-dot" style="background:' + cat.color + '"></span>' + cat.name;
+                sidebar.appendChild(a);
+
+                /* section */
+                var sec = document.createElement('section');
+                sec.className = 'section';
+                sec.id = cat.id;
+                sec.innerHTML =
+                    '<div class="sec-header">' +
+                    '<span class="sec-dot" style="background:' + cat.color + '"></span>' +
+                    '<span class="sec-title">' + cat.name + '</span>' +
+                    '<span class="sec-count">' + cat.systems.length + '</span>' +
+                    '</div>' +
+                    '<div class="cards">' +
+                    cat.systems.map(function(s){ return buildCard(s, cat.color); }).join('') +
+                    '</div>';
+                main.appendChild(sec);
+            });
+
+            /* search */
+            document.getElementById('search').addEventListener('input', function() {
+                var q = this.value.trim().toLowerCase();
+                var noRes = document.getElementById('no-results');
+                var anyVisible = false;
+                document.querySelectorAll('.section').forEach(function(sec) {
+                    var cards = sec.querySelectorAll('.card');
+                    var secVisible = false;
+                    cards.forEach(function(card) {
+                        var match = !q || card.dataset.search.indexOf(q) !== -1;
+                        card.classList.toggle('hidden', !match);
+                        if (match) secVisible = true;
+                    });
+                    sec.classList.toggle('hidden', !secVisible);
+                    if (secVisible) anyVisible = true;
+                });
+                noRes.classList.toggle('show', !anyVisible);
+            });
+
+            /* active nav on scroll */
+            var navItems = document.querySelectorAll('.nav-item');
+            var sections = document.querySelectorAll('.section');
+            window.addEventListener('scroll', function() {
+                var scrollY = window.scrollY + 80;
+                sections.forEach(function(sec, i) {
+                    if (sec.offsetTop <= scrollY) {
+                        navItems.forEach(function(n){ n.classList.remove('active'); });
+                        if (navItems[i]) navItems[i].classList.add('active');
+                    }
+                });
+            });
+            if (navItems[0]) navItems[0].classList.add('active');
+        };
+    </script>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">CIM <span>Web Portal</span></div>
+        <div class="search-wrap">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input id="search" type="text" placeholder="搜尋系統…" autocomplete="off">
+        </div>
+    </header>
+    <div class="layout">
+        <nav class="sidebar">
+            <div class="sidebar-label">類別</div>
+            <div id="sidebar"></div>
+        </nav>
+        <main class="main" id="main">
+            <p id="no-results" class="no-results">找不到符合的系統</p>
+        </main>
+    </div>
+</body>
+</html>
