@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CIM 子像素入口</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    /* 方案 C「子像素」：角色是一排面板子像素般的直條，點開一條就展開它的系統。 */
+    :root {
+      --bg: #eceef2;
+      --paper: #ffffff;
+      --ink: #15171c;
+      --mute: #5a6270;
+      --rule: #d9dde4;
+      --array: #2b66f0; --cf: #12a06a; --lcd: #e89a00; --plp: #9b46d1;
+      --serif: 'Noto Serif TC', 'Songti TC', 'PMingLiU', serif;
+      --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      --tab: 76px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--ink); font: 400 15px/1.6 var(--sans); }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+    .stripe:focus-within .tab:focus-visible { outline-color: #fff; outline-offset: -6px; }
+    button { font: inherit; color: inherit; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+    /* 頂列 */
+    .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; max-width: 1600px; margin: 0 auto; padding: 20px 24px 14px; }
+    .brand { font: 900 28px/1 var(--serif); letter-spacing: .02em; }
+    .brand span { font: 500 14px var(--sans); letter-spacing: 0; margin-left: 10px; color: var(--mute); }
+    .q { flex: 1 1 280px; max-width: 460px; }
+    .q input { width: 100%; height: 44px; padding: 0 14px; border: 2px solid var(--ink); border-radius: 0; background: var(--paper); font: 400 16px var(--sans); color: var(--ink); }
+    .q input:focus { outline-offset: 3px; }
+    .fabs { display: flex; gap: 6px; margin-left: auto; }
+    .fabs button { display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border: 2px solid transparent; border-radius: 0; background: var(--paper); font: 700 13px var(--sans); letter-spacing: .03em; cursor: pointer; }
+    .fabs button::before { content: ''; width: 4px; height: 20px; background: var(--c, var(--ink)); }
+    .fabs button:hover { border-color: var(--ink); }
+    .fabs button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    /* 常用 */
+    .pins { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; max-width: 1600px; margin: 0 auto; padding: 0 24px 14px; font-size: 14px; color: var(--mute); min-height: 34px; }
+    .pins strong { font: 700 14px var(--sans); color: var(--ink); margin-right: 2px; }
+    .pins a { padding: 4px 12px; background: var(--paper); border-left: 4px solid var(--ink); color: var(--ink); font-weight: 700; text-decoration: none; }
+    .pins a:hover { background: var(--ink); color: #fff; }
+
+    /* 直條 */
+    .stripes { display: flex; gap: 6px; max-width: 1600px; min-height: 560px; margin: 0 auto; padding: 0 24px 56px; }
+    .stripe { display: flex; flex: 0 0 var(--tab); min-width: 0; overflow: hidden; }
+    .stripe.open { flex: 1 1 var(--tab); }
+    .tab { flex: none; display: flex; flex-direction: column; align-items: center; gap: 20px; width: var(--tab); padding: 22px 0; border: 0; border-radius: 0; background: var(--c); color: #fff; cursor: pointer; }
+    .tab:hover { filter: brightness(1.12); }
+    .tab .n { font: 700 16px var(--sans); font-variant-numeric: tabular-nums; }
+    .tab .nm { writing-mode: vertical-rl; font: 900 27px/1 var(--serif); letter-spacing: .18em; white-space: nowrap; }
+    .stripe:not(.open) .sheet { display: none; }
+
+    .sheet { flex: 1; min-width: 0; padding: 30px clamp(20px, 3.2vw, 52px) 40px; background: var(--paper); border-top: 6px solid var(--c); }
+    .sh-head h2 { font: 900 clamp(34px, 4.4vw, 60px)/1.1 var(--serif); }
+    .sh-head p { margin-top: 10px; max-width: 46ch; color: var(--mute); font-size: 16px; }
+    .views { display: inline-flex; margin-top: 18px; border: 2px solid var(--ink); }
+    .views button { padding: 6px 16px; border: 0; border-radius: 0; background: none; font-weight: 700; cursor: pointer; }
+    .views button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+    .g { margin-top: 36px; border-top: 3px solid var(--c); }
+    .g h3 { padding-top: 12px; font: 700 19px/1.4 var(--sans); color: var(--c); }
+    .g h3 small { display: block; font-weight: 400; font-size: 13px; color: var(--mute); }
+    .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 0 44px; list-style: none; margin-top: 8px; }
+    .it { display: flex; flex-direction: column; gap: 6px; padding: 16px 0 18px; border-top: 1px solid var(--rule); }
+    .l1 { display: flex; align-items: center; gap: 12px; }
+    .ico { position: relative; flex: none; display: grid; place-items: center; width: 36px; height: 36px; overflow: hidden; background: var(--c); color: #fff; }
+    .ico b { font: 900 17px var(--serif); }
+    .ico img { position: absolute; inset: 0; width: 100%; height: 100%; padding: 4px; object-fit: contain; background: var(--paper); }
+    .l1 a.nm { flex: 1; min-width: 0; font: 700 17px/1.35 var(--sans); color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+    .l1 a.nm:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .star { display: grid; place-items: center; width: 36px; height: 36px; border: 0; background: none; color: #8a93a2; cursor: pointer; }
+    .star:hover { color: var(--ink); }
+    .star[aria-pressed="true"] { color: var(--c); }
+    .ttl { font-weight: 500; font-size: 14px; }
+    .ds { font-size: 13.5px; line-height: 1.6; color: var(--mute); }
+    .badge { font-size: 12px; font-weight: 700; color: var(--c); }
+    .ft { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 4px; }
+    .fb { display: inline-flex; align-items: center; gap: 5px; font: 700 11.5px var(--sans); letter-spacing: .03em; }
+    .fb::before { content: ''; width: 9px; height: 9px; background: var(--c, #9aa3b0); }
+    .fb[data-f="ARRAY"] { --c: var(--array); } .fb[data-f="CF"] { --c: var(--cf); } .fb[data-f="LCD"] { --c: var(--lcd); } .fb[data-f="PLP"] { --c: var(--plp); }
+    .ft .sp { flex: 1; }
+    .doc { font-size: 13px; color: var(--ink); text-underline-offset: 3px; }
+    .go { padding: 5px 16px; background: var(--c); color: #fff; font-weight: 700; font-size: 13px; text-decoration: none; }
+    .go:hover { filter: brightness(.85); }
+    .empty { margin-top: 36px; padding-top: 16px; border-top: 3px solid var(--c); color: var(--mute); max-width: 44ch; }
+
+    /* 載入時直條依序升起，只此一次 */
+    @media (prefers-reduced-motion: no-preference) {
+      .stripe { animation: rise .7s cubic-bezier(.2, .8, .2, 1) backwards; animation-delay: calc(var(--i) * 70ms); transition: flex-grow .5s cubic-bezier(.2, .8, .2, 1); }
+      @keyframes rise { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0); } }
+    }
+
+    @media (max-width: 820px) {
+      .bar, .pins { padding-left: 16px; padding-right: 16px; }
+      .fabs { margin-left: 0; width: 100%; overflow-x: auto; }
+      .stripes { flex-direction: column; min-height: 0; padding: 0 16px 40px; }
+      .stripe, .stripe.open { flex: none; flex-direction: column; }
+      .tab { flex-direction: row-reverse; justify-content: space-between; width: 100%; padding: 16px 20px; }
+      .tab .nm { writing-mode: horizontal-tb; font-size: 22px; letter-spacing: .06em; }
+    }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">CIM<span>Web Portal 2.0</span></div>
+    <div class="q">
+      <label class="sr" for="q">搜尋系統</label>
+      <input id="q" type="search" placeholder="搜尋系統名稱、縮寫或關鍵字（按 / 快速跳到這裡）" autocomplete="off">
+    </div>
+    <div class="fabs" id="fabs" role="group" aria-label="廠別">
+      <button data-fab="ALL">全部廠別</button>
+      <button data-fab="ARRAY" style="--c:var(--array)">ARRAY</button>
+      <button data-fab="CF" style="--c:var(--cf)">CF</button>
+      <button data-fab="LCD" style="--c:var(--lcd)">LCD</button>
+      <button data-fab="PLP" style="--c:var(--plp)">PLP</button>
+    </div>
+  </header>
+  <div class="pins" id="pins" aria-label="我的常用"></div>
+  <main class="stripes" id="stripes"></main>
+
+  <script src="portal-data.js"></script>
+  <script src="portal-core.js"></script>
+  <script>
+    (() => {
+      const K = CimCore, { C, esc } = K, $ = id => document.getElementById(id);
+      const COLOR = { ai: '#3d2fd0', mfg: '#c0401a', eng: '#0b7d70', int: '#a3236f', qa: '#1d57c4', cim: '#7a6200', all: '#33373f' };
+      const roles = C.roles.map(r => r.id);
+
+      K.bindSearch($('q'));
+      $('fabs').addEventListener('click', e => { const b = e.target.closest('[data-fab]'); if (b) K.set({ fab: b.dataset.fab }); });
+
+      // 直條只建一次，之後只切換 class，展開才有動畫
+      $('stripes').innerHTML = C.roles.map((r, i) => `
+        <section class="stripe" data-role="${r.id}" style="--c:${COLOR[r.id]};--i:${i}">
+          <button class="tab" data-k="t-${r.id}" aria-expanded="false"><span class="n"></span><span class="nm">${esc(r.name)}</span></button>
+          <div class="sheet" role="region" aria-label="${esc(r.name)}"></div>
+        </section>`).join('');
+      $('stripes').addEventListener('click', e => {
+        const t = e.target.closest('.tab'); if (t) return K.set({ role: t.closest('.stripe').dataset.role });
+        const s = e.target.closest('[data-star]'); if (s) K.toggleFav(s.dataset.star);
+        const v = e.target.closest('[data-view]'); if (v) K.set({ aiView: v.dataset.view });
+      });
+
+      const item = (s, st) => {
+        const doc = s.docs[0];
+        return `<li class="it">
+          <div class="l1">${K.icon(s)}<a class="nm" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${K.starBtn(s)}</div>
+          <div class="ttl">${esc(s.title)}</div>
+          <p class="ds">${esc(s.desc)}</p>
+          ${st.role === 'ai' && s.aiMeta ? `<div class="badge">${esc(s.aiMeta.badge)}</div>` : ''}
+          <div class="ft">${s.fabs.map(f => `<span class="fb" data-f="${f}">${K.fabName(f)}</span>`).join('')}<span class="sp"></span>${doc ? `<a class="doc" href="${esc(doc.url)}" target="_blank" rel="noopener">手冊</a>` : ''}<a class="go" href="${esc(s.url)}" target="_blank" rel="noopener" aria-label="開啟 ${esc(s.name)}">開啟</a></div>
+        </li>`;
+      };
+
+      K.mount(st => {
+        document.querySelectorAll('#fabs [data-fab]').forEach(b => b.setAttribute('aria-pressed', b.dataset.fab === st.fab));
+
+        const favs = C.systems.filter(s => K.isFav(s.id));
+        $('pins').innerHTML = favs.length
+          ? `<strong>常用</strong>${favs.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join('')}`
+          : '點系統旁的星號，常用系統會釘在這裡。';
+
+        roles.forEach(id => {
+          const el = document.querySelector(`.stripe[data-role="${id}"]`), open = id === st.role;
+          el.classList.toggle('open', open);
+          el.querySelector('.tab').setAttribute('aria-expanded', open);
+          el.querySelector('.n').textContent = K.count(id);
+          el.querySelector('.sheet').innerHTML = open ? sheet(st) : '';
+        });
+      });
+
+      function sheet(st) {
+        const r = K.role(st.role), gs = K.groups();
+        const views = st.role === 'ai'
+          ? `<div class="views">${[['scenario', '應用場景'], ['tech', '技術架構']].map(([id, t]) => `<button data-view="${id}" data-k="v-${id}" aria-pressed="${st.aiView === id}">${t}</button>`).join('')}</div>`
+          : '';
+        return `<div class="sh-head"><h2>${esc(r.name)}</h2><p>${esc(r.desc)}</p>${views}</div>`
+          + (gs.length
+            ? gs.map(g => `<section class="g">${g.flat ? '' : `<h3>${esc(g.name)}${g.desc ? `<small>${esc(g.desc)}</small>` : ''}</h3>`}<ul class="list">${g.systems.map(s => item(s, st)).join('')}</ul></section>`).join('')
+            : `<div class="empty">${K.emptyMsg()}</div>`);
+      }
+    })();
+  </script>
+</body>
+</html>
